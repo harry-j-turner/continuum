@@ -33,7 +33,7 @@ resource "aws_security_group" "dragon_road_access" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["82.132.215.205/32"]
+    cidr_blocks = ["82.37.52.190/32"]
   }
 
   ingress {
@@ -77,13 +77,67 @@ resource "aws_security_group" "continuum_db_access" {
   }
 }
 
+# Server
+########
+
+resource "aws_iam_policy" "ecr_read_policy" {
+  name        = "ecrReadPolicy"
+  path        = "/"
+  description = "Policy for reading from ECR"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = ["ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage", "ecr:BatchCheckLayerAvailability", "ecr:GetAuthorizationToken"],
+        Effect   = "Allow",
+        Resource = "*"
+      },
+    ],
+  })
+}
+
+
+resource "aws_iam_role" "ec2_ecr_role" {
+  name = "EC2ECRRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com",
+        },
+      },
+    ],
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_read_policy_attachment" {
+  role       = aws_iam_role.ec2_ecr_role.name
+  policy_arn = aws_iam_policy.ecr_read_policy.arn
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2Profile"
+  role = aws_iam_role.ec2_ecr_role.name
+}
+
+resource "aws_key_pair" "continuum_key" {
+  key_name   = "continuum_key"
+  public_key = file("/home/harry_turner/.ssh/ssh.continuum.com.pub")
+}
+
 resource "aws_instance" "server" {
   ami           = "ami-0cfd0973db26b893b"
   instance_type = "t2.micro"
-
-  key_name = aws_key_pair.continuum_key.key_name
+  key_name      = aws_key_pair.continuum_key.key_name
 
   vpc_security_group_ids = [aws_security_group.dragon_road_access.id, aws_security_group.continuum_db_access.id]
+
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<-EOF
               #!/bin/bash           
@@ -93,11 +147,6 @@ resource "aws_instance" "server" {
               sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
               EOF
-}
-
-resource "aws_key_pair" "continuum_key" {
-  key_name   = "continuum_key"
-  public_key = file("/home/harry_turner/.ssh/ssh.continuum.com.pub")
 }
 
 resource "aws_eip" "server_eip" {
