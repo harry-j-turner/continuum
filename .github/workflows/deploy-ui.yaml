@@ -41,7 +41,7 @@ jobs:
           aws-region: eu-west-2
 
       - name: Deploy to S3
-        run: aws s3 sync ./ui/build s3://ui.continuum.ai --delete
+        run: aws s3 sync ./ui/build s3://ui.continuum-journal.com --delete
 
       - name: Invalidate CloudFront Cache
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
