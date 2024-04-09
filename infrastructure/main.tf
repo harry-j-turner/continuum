@@ -126,3 +126,16 @@ resource "aws_db_instance" "continuum_db" {
   skip_final_snapshot = true
   vpc_security_group_ids = [aws_security_group.continuum_db_access.id]
 }
+
+resource "aws_ecr_repository" "continuum" {
+  name                 = "continuum"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+}
