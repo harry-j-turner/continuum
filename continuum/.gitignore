@@ -1,0 +1,13 @@
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+# Env files
+.env
+.env.dev
+.env.dev.db
+.env.prod
+.env.prod.db
+.env.prod.proxy-companion
