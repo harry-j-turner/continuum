@@ -4,7 +4,9 @@ import { selectToken } from '../state/profile';
 
 // Set based on domain. For local development, use 'http://localhost:8000/api'
 const API_BASE_URL =
-  window.location.origin === 'http://localhost:3000' ? 'http://localhost:8000/api' : 'https://api.continuum.ai/api';
+  window.location.origin === 'http://localhost:3000'
+    ? 'http://localhost:8000/api'
+    : 'https://api.continuum-journal.com/api';
 
 type Entity = Thought | Tag | Entry;
 
