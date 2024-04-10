@@ -1,6 +1,7 @@
 import datetime
-from django.db import models
 from uuid import uuid4
+
+from django.db import models
 
 
 class Tag(models.Model):
@@ -27,7 +28,7 @@ class Thought(models.Model):
 
     content = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
-    entry = models.ForeignKey('Entry', on_delete=models.CASCADE)
+    entry = models.ForeignKey("Entry", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.content
@@ -41,4 +42,3 @@ class Entry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     date = models.DateField()
-

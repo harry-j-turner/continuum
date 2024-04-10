@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from os import getenv
 from pathlib import Path
+
 import sentry_sdk
 from openai import OpenAI
 
@@ -19,10 +20,10 @@ from openai import OpenAI
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = getenv("SECRET_KEY")
-DEBUG = getenv('DEBUG', 0) == '1'
+DEBUG = getenv("DEBUG", 0) == "1"
 ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS").split(" ")
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_HEADERS = ['Quanda-Project', 'Content-Type', 'Authorization', 'Content-Disposition']
+CORS_ALLOW_HEADERS = ["Quanda-Project", "Content-Type", "Authorization", "Content-Disposition"]
 
 
 # Application definition
@@ -34,18 +35,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
+    "rest_framework",
     "rest_framework_simplejwt",
-    'guardian',
-    'user',
-    'thought',
-    'api'
+    "guardian",
+    "user",
+    "thought",
+    "api",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -79,7 +80,7 @@ WSGI_APPLICATION = "continuum.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": getenv("DB_NAME"),
         "USER": getenv("DB_USER"),
@@ -94,12 +95,12 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/topics/cache/
 
 CACHES = {
-    'default': {
-        'BACKEND': 'continuum.cache.LoggingRedisCache',
-        'LOCATION': "redis://redis:6379/1",
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
+    "default": {
+        "BACKEND": "continuum.cache.LoggingRedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
 }
 
@@ -107,11 +108,10 @@ CACHES = {
 CACHE_TTL = 60 * 60
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = "user.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -127,34 +127,32 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
- 
+
 
 # Permissions
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
-    #django.contrib.auth.backends.RemoteUserBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "guardian.backends.ObjectPermissionBackend",
+    # django.contrib.auth.backends.RemoteUserBackend',
 )
 
 
 # Auth
 SIMPLE_JWT = {
-    'ALGORITHM': 'RS256',
-    'AUDIENCE': 'api.quanda.ai',
-    'ISSUER': f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/",
-    'USER_INFO_ENDPOINT': f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/userinfo",
-    'JWK_URL': f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/.well-known/jwks.json",
-    "USER_ID_CLAIM": 'sub',
-    "USER_ID_FIELD": 'sub',
-    'JTI_CLAIM': None,
-    'TOKEN_TYPE_CLAIM': None,
+    "ALGORITHM": "RS256",
+    "AUDIENCE": "api.quanda.ai",
+    "ISSUER": f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/",
+    "USER_INFO_ENDPOINT": f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/userinfo",
+    "JWK_URL": f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/.well-known/jwks.json",
+    "USER_ID_CLAIM": "sub",
+    "USER_ID_FIELD": "sub",
+    "JTI_CLAIM": None,
+    "TOKEN_TYPE_CLAIM": None,
 }
 
 # REST Framework
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'user.auth.Auth0Authentication',
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("user.auth.Auth0Authentication",),
 }
 
 
@@ -190,41 +188,41 @@ CSRF_TRUSTED_ORIGINS = getenv("CSRF_TRUSTED_ORIGINS").split(" ")
 # https://docs.djangoproject.com/en/4.2/topics/logging/
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{', 
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        }, 
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
         },
-        'continuum': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
+        "continuum": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
         },
-        'urllib3': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False, 
+        "urllib3": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
         },
-    }, 
+    },
 }
 
 # Sentry
@@ -238,14 +236,14 @@ sentry_sdk.init(
 
 # Email
 
-EMAIL_BACKEND = 'django_ses.SESBackend'
-AWS_ACCESS_KEY_ID = getenv('QUANDA_AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = getenv('QUANDA_AWS_SECRET_ACCESS_KEY')
-AWS_SES_REGION_NAME = 'eu-west-2'
-AWS_SES_REGION_ENDPOINT = 'email.eu-west-2.amazonaws.com'
-DEFAULT_FROM_EMAIL = 'report@continuum.ai'
+EMAIL_BACKEND = "django_ses.SESBackend"
+AWS_ACCESS_KEY_ID = getenv("QUANDA_AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = getenv("QUANDA_AWS_SECRET_ACCESS_KEY")
+AWS_SES_REGION_NAME = "eu-west-2"
+AWS_SES_REGION_ENDPOINT = "email.eu-west-2.amazonaws.com"
+DEFAULT_FROM_EMAIL = "report@continuum.ai"
 
 
 # OpenAI
-OPENAI_KEY = getenv('OPENAI_KEY')
+OPENAI_KEY = getenv("OPENAI_KEY")
 OPENAI_CLIENT = OpenAI(api_key=OPENAI_KEY)

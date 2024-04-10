@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
-from thought.models import Thought, Tag, Entry
+from thought.models import Entry, Tag, Thought
 from user.models import User
+
 
 class Command(BaseCommand):
     help = "Seed the database with initial data."
@@ -9,22 +10,18 @@ class Command(BaseCommand):
         """Seed the database with initial data."""
 
         self.stdout.write(self.style.HTTP_INFO("Creating Users..."))
-        user_admin, _ = User.objects.get_or_create(username='admin')
-        user_admin.set_password('admin')
+        user_admin, _ = User.objects.get_or_create(username="admin")
+        user_admin.set_password("admin")
         user_admin.is_superuser = True
         user_admin.is_staff = True
         user_admin.save()
 
         self.stdout.write(self.style.HTTP_INFO("Creating Tags..."))
         tag_sleep, _ = Tag.objects.get_or_create(
-            name="sleep", 
-            description="For thoughts about sleep.", 
-            colour="rgb(185,131,137)"
+            name="sleep", description="For thoughts about sleep.", colour="rgb(185,131,137)"
         )
         tag_projects, _ = Tag.objects.get_or_create(
-            name="projects", 
-            description="For thoughts about projects.", 
-            colour="rgb(181,157,164)"
+            name="projects", description="For thoughts about projects.", colour="rgb(181,157,164)"
         )
 
         self.stdout.write(self.style.HTTP_INFO("Creating entry 1..."))
