@@ -33,7 +33,7 @@ function AuthenticatedApp() {
       dispatch(setToken(accessToken));
       // TODO: If project does not exist, handle it.
 
-      fetch('https://dev-czejtnrwqf2cuw1e.uk.auth0.com/userinfo', {
+      fetch('https://continuum.uk.auth0.com/userinfo', {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
@@ -127,6 +127,49 @@ function LoginScreen() {
 
   if (isLoading) return null;
 
+  if (window.innerWidth < 500) {
+    return (
+      <Pane
+        width="100%"
+        height="100vh"
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        style={{
+          backgroundImage: bgImage,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <img src="continuum_logo_white.png" alt="Continuum Logo" width={100} height={100} />
+        <h1
+          style={{
+            fontSize: 72,
+            fontWeight: 300,
+            fontFamily: 'Oxygen',
+            color: theme.colors.white
+          }}
+        >
+          Continuum
+        </h1>
+        <p
+          style={{
+            fontSize: 20,
+            fontWeight: 300,
+            fontFamily: 'Oxygen',
+            color: theme.colors.white,
+            width: '80%',
+            textAlign: 'center'
+          }}
+        >
+          It looks like you're using a mobile device. Mobile support is on the way, in the meantime please use a desktop
+          to access the app.
+        </p>
+      </Pane>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <Pane
@@ -170,11 +213,11 @@ function LoginScreen() {
 function App() {
   return (
     <Auth0Provider
-      domain="dev-czejtnrwqf2cuw1e.uk.auth0.com"
-      clientId="FrKaByHTyqxjP4AFIKqzeAw2dvzQdlJp"
+      domain="continuum.uk.auth0.com"
+      clientId="AXYTB6U95xAUDALRWeNa9Z2p4b8E99BQ"
       authorizationParams={{
         redirect_uri: window.location.origin,
-        audience: 'api.quanda.ai',
+        audience: 'api.continuum-journal.com',
         scope: 'read:current_user update:current_user_metadata openid email'
       }}
     >

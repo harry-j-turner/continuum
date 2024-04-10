@@ -140,10 +140,10 @@ AUTHENTICATION_BACKENDS = (
 # Auth
 SIMPLE_JWT = {
     "ALGORITHM": "RS256",
-    "AUDIENCE": "api.quanda.ai",
-    "ISSUER": f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/",
-    "USER_INFO_ENDPOINT": f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/userinfo",
-    "JWK_URL": f"https://dev-czejtnrwqf2cuw1e.uk.auth0.com/.well-known/jwks.json",
+    "AUDIENCE": "api.continuum-journal.com",
+    "ISSUER": f"https://continuum.uk.auth0.com/",
+    "USER_INFO_ENDPOINT": f"https://continuum.uk.auth0.com/userinfo",
+    "JWK_URL": f"https://continuum.uk.auth0.com/.well-known/jwks.json",
     "USER_ID_CLAIM": "sub",
     "USER_ID_FIELD": "sub",
     "JTI_CLAIM": None,
