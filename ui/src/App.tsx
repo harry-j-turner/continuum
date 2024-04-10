@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect } from 'react';
 import theme from './theme';
-import { Button, DocumentIcon, LogOutIcon, PersonIcon, ThemeProvider, toaster } from 'evergreen-ui';
+import { Button, CodeIcon, DocumentIcon, LogOutIcon, PersonIcon, ThemeProvider, toaster } from 'evergreen-ui';
 
 import { Pane } from 'evergreen-ui';
 import { store, AppDispatch } from './state/store';
@@ -19,6 +19,7 @@ import { LoadingScreen } from './components/LoadingScreen';
 // Fragments
 import TagManager, { TagManagerRef } from './fragments/TagManager/TagManagerRef';
 import { useAPI } from './hooks';
+import { version } from './version';
 
 function AuthenticatedApp() {
   const api = useAPI();
@@ -82,6 +83,12 @@ function AuthenticatedApp() {
               {
                 name: username ?? 'Unknown',
                 icon: PersonIcon,
+                disabled: true,
+                onClick: () => null
+              },
+              {
+                name: `Version: ${version}`,
+                icon: CodeIcon,
                 disabled: true,
                 onClick: () => null
               },
