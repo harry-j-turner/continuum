@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
-import { debounce } from 'lodash';
 import { EditableText } from '@blueprintjs/core';
 import { Tag, Thought } from '../../types';
 import { Button, Pane, TrashIcon } from 'evergreen-ui';
