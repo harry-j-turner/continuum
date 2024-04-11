@@ -27,7 +27,7 @@ def generate_report(request):
     seven_days_ago = now() - timedelta(days=7)
     entries = (
         get_objects_for_user(request.user, "view_entry", klass=Entry)
-        .filter(date__lte=seven_days_ago)
+        .filter(date__gte=seven_days_ago)
         .prefetch_related(
             Prefetch("thought_set", queryset=Thought.objects.select_related("entry").prefetch_related("tags"))
         )
