@@ -21,19 +21,11 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({ thought, onUpdate, onDele
     setContent(thought.content);
   }, [thought]);
 
-  const debouncedSave = useCallback(
-    debounce(({ content, tags }: { content: string; tags: string[] }) => {
-      onUpdate({ ...thought, content, tags });
-    }, 500),
-    [onUpdate]
-  ); // Adjust debounce time (in ms) as needed
-
   const handleChangeContent = useCallback(
     (content: string) => {
-      setContent(content);
-      debouncedSave({ content, tags: thought.tags });
+      onUpdate({ ...thought, content, tags: thought.tags });
     },
-    [debouncedSave, thought]
+    [thought]
   );
 
   const onChangeTags = useCallback(
@@ -54,7 +46,8 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({ thought, onUpdate, onDele
       <EditableText
         multiline={true}
         value={content}
-        onChange={handleChangeContent}
+        onConfirm={handleChangeContent}
+        onChange={(content: string) => setContent(content)}
         className="thought-editor-editable-text"
       />
     </Pane>
