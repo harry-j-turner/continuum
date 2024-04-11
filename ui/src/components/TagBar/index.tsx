@@ -33,7 +33,7 @@ const TagBar = React.forwardRef(({ tags, onSave, allTags, updateTags }: TagBarPr
         if (tag) {
           existingTagIds.push(tag.id);
         } else {
-          newTagNames.push(value);
+          newTagNames.push(value.toLowerCase());
         }
       }
 
