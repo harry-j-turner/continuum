@@ -67,6 +67,10 @@ function ActiveItem() {
     [activeEntry, dispatch]
   );
 
+  const todaysDate = new Date().toDateString();
+  const entryDate = activeEntry ? new Date(activeEntry.date).toDateString() : '';
+  const isCurrentDate = todaysDate === entryDate;
+
   if (!activeEntry) {
     return (
       <Pane
@@ -108,14 +112,19 @@ function ActiveItem() {
           {new Date(activeEntry.date).toDateString()}
         </Heading>
 
-        <Button onClick={handleNewThought} appearance="primary" iconBefore={PlusIcon}>
-          Add thought
-        </Button>
+        {isCurrentDate ? (
+          <Button onClick={handleNewThought} appearance="primary" iconBefore={PlusIcon}>
+            Add thought
+          </Button>
+        ) : (
+          <Pane />
+        )}
       </Pane>
       <Pane flex="1" width="100%" className="browseBodyNoScrollbar" marginTop={16}>
         <Pane width="100%" flex={1} display="flex" flexDirection="column">
           {activeEntry.thoughts.map((thought) => (
             <ThoughtEditor
+              isDisabled={!isCurrentDate}
               key={thought.id}
               thought={thought}
               onUpdate={handleUpdateThought}

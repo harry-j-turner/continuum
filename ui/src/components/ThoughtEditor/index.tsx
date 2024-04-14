@@ -11,9 +11,17 @@ interface ThoughtEditorProps {
   onDelete: (thought: Thought) => void;
   updateTags: (tags: Tag[]) => void;
   allTags: Tag[];
+  isDisabled: boolean;
 }
 
-const ThoughtEditor: React.FC<ThoughtEditorProps> = ({ thought, onUpdate, onDelete, updateTags, allTags }) => {
+const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
+  thought,
+  onUpdate,
+  onDelete,
+  updateTags,
+  allTags,
+  isDisabled
+}) => {
   const [content, setContent] = useState<string>(thought.content);
 
   useEffect(() => {
@@ -35,14 +43,15 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({ thought, onUpdate, onDele
   );
 
   return (
-    <Pane key={thought.id} marginBottom={16} backgroundColor="rgba(255, 255, 255, 0.5)" padding={16} borderRadius={4}>
+    <Pane key={thought.id} marginBottom={16} backgroundColor="rgba(255, 255, 255, 0.7)" padding={16} borderRadius={4}>
       <Pane display="flex" justifyContent="space-between" marginBottom={16}>
         <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={updateTags} allTags={allTags} />
-        <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon}>
+        <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon} disabled={isDisabled}>
           Delete
         </Button>
       </Pane>
       <EditableText
+        disabled={isDisabled}
         multiline={true}
         value={content}
         onConfirm={handleChangeContent}
