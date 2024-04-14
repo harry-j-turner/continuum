@@ -33,5 +33,6 @@ class Auth0Authentication(authentication.BaseAuthentication):
                 user.username = email
                 user.email = email
                 user.save()
+                user.onboard()
 
         return (user, validated_token)

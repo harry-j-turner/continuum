@@ -2,13 +2,13 @@ VERSION = "0.1.1"
 
 VERSION_NOTES = [
     {
-        "version": "0.1.1",
+        "version": "0.1.2",
         "date": "2024-04-11",
         "fixes": [
             "Email report was not properly collecting last seven days of thoughts.",
             "Thought entry textbox was not updating state properly.",
         ],
-        "features": ["None."],
+        "features": ["Added user onboarding."],
     },
     {
         "version": "0.1.0",

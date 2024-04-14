@@ -91,6 +91,13 @@ DATABASES = {
 }
 
 
+if getenv("TESTING", "0") == "1":
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
+    }
+
+
 # Caching
 # https://docs.djangoproject.com/en/4.2/topics/cache/
 
