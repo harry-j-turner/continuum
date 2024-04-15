@@ -20,7 +20,7 @@ from openai import OpenAI
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = getenv("SECRET_KEY")
-DEBUG = getenv("DEBUG", 0) == "1"
+DEBUG = getenv("DEBUG", 0) == 1
 ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS").split(" ")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = ["Quanda-Project", "Content-Type", "Authorization", "Content-Disposition"]
@@ -233,12 +233,12 @@ LOGGING = {
 }
 
 # Sentry
-
-sentry_sdk.init(
-    dsn="https://f89e9eab93a47612114118cb9b2be922@o382306.ingest.us.sentry.io/4507040255180800",
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-)
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://f89e9eab93a47612114118cb9b2be922@o382306.ingest.us.sentry.io/4507040255180800",
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 
 # Email
@@ -254,3 +254,7 @@ DEFAULT_FROM_EMAIL = "report@continuum.ai"
 # OpenAI
 OPENAI_KEY = getenv("OPENAI_KEY")
 OPENAI_CLIENT = OpenAI(api_key=OPENAI_KEY)
+
+# Celery
+CELERY_BROKER_URL = getenv("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = getenv("CELERY_BROKER", "redis://redis:6379/0")

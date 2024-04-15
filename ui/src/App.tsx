@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect } from 'react';
 import theme from './theme';
-import { Button, CodeIcon, DocumentIcon, LogOutIcon, PersonIcon, ThemeProvider, toaster } from 'evergreen-ui';
+import { Button, CodeIcon, EditIcon, LogOutIcon, PersonIcon, ThemeProvider, TimelineLineChartIcon } from 'evergreen-ui';
 
 import { Pane } from 'evergreen-ui';
 import { store, AppDispatch } from './state/store';
@@ -18,16 +18,16 @@ import { LoadingScreen } from './components/LoadingScreen';
 
 // Fragments
 import TagManager, { TagManagerRef } from './fragments/TagManager/TagManagerRef';
-import { useAPI } from './hooks';
 import { version } from './version';
+import Analysis from './components/Analysis';
 
 function AuthenticatedApp() {
-  const api = useAPI();
   const dispatch = useDispatch<AppDispatch>();
   const { getAccessTokenSilently, logout } = useAuth0();
   const token = useSelector(selectToken);
   const username = useSelector(selectUsername);
   const tagManagerRef = React.useRef<TagManagerRef>(null);
+  const [page, setPage] = React.useState<'home' | 'reports'>('home');
 
   useEffect(() => {
     getAccessTokenSilently().then((accessToken) => {
@@ -47,17 +47,6 @@ function AuthenticatedApp() {
     });
   }, []);
 
-  const handleSendReport = () => {
-    api
-      .generateReport()
-      .then(() => {
-        toaster.success('Report sent!');
-      })
-      .catch(() => {
-        toaster.danger('Failed to send report');
-      });
-  };
-
   if (!token) return <LoadingScreen />;
 
   return (
@@ -71,9 +60,14 @@ function AuthenticatedApp() {
       <Header
         links={[
           {
-            name: 'Send Report',
-            icon: DocumentIcon,
-            onClick: () => handleSendReport()
+            name: 'Journal',
+            icon: EditIcon,
+            onClick: () => setPage('home')
+          },
+          {
+            name: 'Analysis',
+            icon: TimelineLineChartIcon,
+            onClick: () => setPage('reports')
           },
           {
             name: 'Account',
@@ -106,21 +100,26 @@ function AuthenticatedApp() {
 
       {/* Take background image from public/mountain_background.png */}
       <Pane className="App" width="100%" flex="1" display="flex">
-        <Pane
-          width="25%"
-          display="flex"
-          flexDirection="column"
-          justifyContent="space-between"
-          borderRadius={4}
-          margin={16}
-          marginRight={0}
-        >
-          <Navigator />
-        </Pane>
+        {page === 'home' && (
+          <>
+            <Pane
+              width="25%"
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              borderRadius={4}
+              margin={16}
+              marginRight={0}
+            >
+              <Navigator />
+            </Pane>
 
-        <Pane width="75%" display="flex" flexDirection="column" borderRadius={4} margin={16} flex="1">
-          <ActiveItem />
-        </Pane>
+            <Pane width="75%" display="flex" flexDirection="column" borderRadius={4} margin={16} flex="1">
+              <ActiveItem />
+            </Pane>
+          </>
+        )}
+        {page === 'reports' && <Analysis />}
       </Pane>
     </Pane>
   );

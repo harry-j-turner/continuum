@@ -30,6 +30,11 @@ class Thought(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     entry = models.ForeignKey("Entry", on_delete=models.CASCADE)
 
+    mood = models.IntegerField(
+        choices=[(1, "Very Unhappy"), (2, "Unhappy"), (3, "Neutral"), (4, "Happy"), (5, "Very Happy")], null=True
+    )
+    actions = models.TextField(blank=True)
+
     def __str__(self):
         return self.content
 

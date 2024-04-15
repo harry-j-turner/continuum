@@ -6,7 +6,6 @@ logger = logging.getLogger("continuum")
 
 
 class LoggingRedisCache(RedisCache):
-
     def get(self, key, default=None, version=None):
         """Override get method to log cache hits and misses."""
 

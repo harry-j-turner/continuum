@@ -11,6 +11,7 @@ import ThoughtEditor from '../ThoughtEditor';
 
 import useAPI from '../../hooks/useAPI';
 import { setEntry } from '../../state/item';
+import * as Sentry from '@sentry/react';
 
 function ActiveItem() {
   const activeEntry = useSelector(selectEntry);
@@ -34,12 +35,13 @@ function ActiveItem() {
 
   const handleNewThought = useCallback(() => {
     if (!activeEntry) return;
-    const newThought: Omit<Thought, 'id' | 'entry'> = {
+    const newThought: Omit<Thought, 'id' | 'entry' | 'mood' | 'actions'> = {
       content: '',
       tags: []
     };
     api.createThought({ entryId: activeEntry.id, item: newThought }).then((thought) => {
       if (!thought) return;
+      Sentry.metrics.increment('create_thought', 1);
       dispatch(setEntry({ entry: { ...activeEntry, thoughts: [...activeEntry.thoughts, thought] } }));
     });
   }, [activeEntry, dispatch]);

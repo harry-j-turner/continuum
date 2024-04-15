@@ -8,6 +8,8 @@ from django.core.mail import send_mail
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
+from django.utils.dateparse import parse_date
+from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from guardian.shortcuts import assign_perm, get_objects_for_user
 from rest_framework import filters, status, viewsets
@@ -16,6 +18,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from thought.models import Entry, Tag, Thought
+from thought.tasks import extract_mood
 
 logger = getLogger(__name__)
 
@@ -23,7 +26,6 @@ logger = getLogger(__name__)
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def generate_report(request):
-
     seven_days_ago = now() - timedelta(days=7)
     entries = (
         get_objects_for_user(request.user, "view_entry", klass=Entry)
@@ -115,11 +117,35 @@ class EntryViewSet(viewsets.ModelViewSet):
             queryset = queryset.annotate(
                 search=SearchVector("thought__content"),
             ).filter(search=search_query)
+
+        # Filter by start and end date
+        start_date = self.request.query_params.get("start_date", None)
+        end_date = self.request.query_params.get("end_date", None)
+
+        if start_date:
+            try:
+                start_date = parse_date(start_date)
+                if start_date:
+                    queryset = queryset.filter(date__gte=start_date)
+                else:
+                    raise ValidationError("Invalid start date format.")
+            except ValidationError:
+                pass
+
+        if end_date:
+            try:
+                end_date = parse_date(end_date)
+                if end_date:
+                    queryset = queryset.filter(date__lte=end_date)
+                else:
+                    raise ValidationError("Invalid end date format.")
+            except ValidationError:
+                pass
+
         return queryset
 
     def paginate_queryset(self, queryset):
         if self.action == "list":
-            print(queryset.values())
             return super().paginate_queryset(queryset)
         return None
 
@@ -155,6 +181,11 @@ class EntryViewSet(viewsets.ModelViewSet):
         serializer = ThoughtSerializer(thought, data=request.data)
         if serializer.is_valid():
             serializer.save()
+
+            content_words = serializer.validated_data.get("content", "").split()
+            if len(content_words) >= 10:
+                extract_mood.delay(thought.id)
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -2,9 +2,7 @@ version: "3.8"
 
 services:
   app:
-    build:
-      context: ./continuum
-      dockerfile: Dockerfile.prod
+    image: 664735937512.dkr.ecr.eu-west-2.amazonaws.com/continuum:latest
     command: gunicorn continuum.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/continuum/continuum/staticfiles
@@ -12,6 +10,19 @@ services:
       - 8000
     env_file:
       - ./.env.prod
+
+  celery:
+    image: 664735937512.dkr.ecr.eu-west-2.amazonaws.com/continuum:latest
+    command: celery --app=continuum worker --loglevel=info
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
 
   nginx-proxy:
     container_name: nginx-proxy

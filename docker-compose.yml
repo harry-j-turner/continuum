@@ -3,7 +3,7 @@ version: "3.8"
 services:
   app:
     build: ./continuum
-    command: python manage.py runserver 0.0.0.0:8000
+    command: django
     volumes:
       - ./continuum:/continuum
     ports:
@@ -26,6 +26,17 @@ services:
       - ./ui:/app
     ports:
       - "3000:3000"
+
+  celery:
+    build: ./continuum
+    command: celery
+    volumes:
+      - ./continuum:/usr/src/app
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - app
+      - redis
 
   redis:
     image: "redis:latest"

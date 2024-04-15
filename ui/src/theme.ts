@@ -22,7 +22,9 @@ const theme = mergeTheme(defaultTheme, {
     Button: {
       appearances: {
         primary: {
-          backgroundColor: 'rgba(255, 255, 255, 0.6)',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          borderShadow: 'none',
+          boxShadow: 'none',
           opacity: 0.8,
           color: PRIMARY,
           fontWeight: '600',
@@ -138,19 +140,22 @@ const theme = mergeTheme(defaultTheme, {
     },
     Tab: {
       baseStyle: {
-        color: BACKGROUND,
+        color: 'orange',
         fontWeight: '600',
-        padding: 8,
+        padding: 64,
         borderRadius: 4,
         marginRight: 8,
         userSelect: 'none'
       },
       appearances: {
-        custom: {
+        primary: {
           selectors: {
             _current: {
               color: PRIMARY,
-              backgroundColor: BACKGROUND,
+              textDecoration: 'none',
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              boxShadow: 'none',
+              border: 'none',
               userSelect: 'none'
             },
             _focus: {

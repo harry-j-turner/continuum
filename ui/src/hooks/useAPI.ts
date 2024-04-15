@@ -85,11 +85,16 @@ const useAPI = () => {
 
   interface ListEntries {
     searchTerm?: string;
+    startDate?: string;
+    endDate?: string;
   }
 
-  const listEntries = async ({ searchTerm }: ListEntries): Promise<Entry[] | null> => {
+  const listEntries = async ({ searchTerm, startDate, endDate }: ListEntries): Promise<Entry[] | null> => {
     const params = new URLSearchParams();
     if (searchTerm) params.append('search', searchTerm);
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+
     const response = await callAPI(`entries/?${params.toString()}`);
     if (!response) return null;
     const data: DjangoListResponse = await response.json();
@@ -122,7 +127,7 @@ const useAPI = () => {
 
   interface CreateThought {
     entryId: string;
-    item: Omit<Thought, 'id' | 'entry'>;
+    item: Omit<Thought, 'id' | 'entry' | 'mood' | 'actions'>;
   }
 
   const createThought = async ({ entryId, item }: CreateThought): Promise<Thought | null> => {

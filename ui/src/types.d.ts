@@ -3,6 +3,8 @@ export type Thought = {
   content: string;
   entry: string;
   tags: string[];
+  mood: number;
+  actions: string;
 };
 
 export type Entry = {

@@ -39,7 +39,7 @@ repos:
         additional_dependencies: []
         description: This hook lints the Continuum backend with flake8.
 
-      - id: format-contiuum
+      - id: format-continuum
         name: Format Continuum
         entry: python3.10 -m black --check --line-length 120 .
         language: system
