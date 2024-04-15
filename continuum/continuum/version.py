@@ -1,6 +1,12 @@
-VERSION = "0.1.2"
+VERSION = "0.2.0"
 
 VERSION_NOTES = [
+    {
+        "version": "0.2.0",
+        "date": "2024-04-15",
+        "fixes": ["None"],
+        "features": ["Added Celery for out of band thought processing."],
+    },
     {
         "version": "0.1.2",
         "date": "2024-04-11",
