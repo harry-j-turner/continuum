@@ -18,7 +18,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from thought.models import Entry, Tag, Thought
-from thought.tasks import extract_mood
+from thought.tasks import extract_mood, extract_actions
 
 logger = getLogger(__name__)
 
@@ -185,6 +185,7 @@ class EntryViewSet(viewsets.ModelViewSet):
             content_words = serializer.validated_data.get("content", "").split()
             if len(content_words) >= 10:
                 extract_mood.delay(thought.id)
+                extract_actions.delay(thought.id)
 
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
