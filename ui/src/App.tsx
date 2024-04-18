@@ -12,21 +12,16 @@ import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import ActiveItem from './components/ActiveItem';
 import Navigator from './components/Navigator';
 
-import { selectToken, selectUsername, setToken, setUsername } from './state/profile';
+import { selectUsername, setToken, setUsername } from './state/profile';
 import { Header } from './components/Header';
-import { LoadingScreen } from './components/LoadingScreen';
 
-// Fragments
-import TagManager, { TagManagerRef } from './fragments/TagManager/TagManagerRef';
 import { version } from './version';
-import Analysis from './components/Analysis';
+import Analysis from './pages/Analysis';
 
 function AuthenticatedApp() {
   const dispatch = useDispatch<AppDispatch>();
   const { getAccessTokenSilently, logout } = useAuth0();
-  const token = useSelector(selectToken);
   const username = useSelector(selectUsername);
-  const tagManagerRef = React.useRef<TagManagerRef>(null);
   const [page, setPage] = React.useState<'home' | 'reports'>('home');
 
   useEffect(() => {
@@ -46,8 +41,6 @@ function AuthenticatedApp() {
       });
     });
   }, []);
-
-  if (!token) return <LoadingScreen />;
 
   return (
     <Pane
@@ -95,8 +88,6 @@ function AuthenticatedApp() {
           }
         ]}
       />
-
-      <TagManager ref={tagManagerRef} />
 
       {/* Take background image from public/mountain_background.png */}
       <Pane className="App" width="100%" flex="1" display="flex">

@@ -34,16 +34,12 @@ function BrowseableItem({ entry, selected, onSelect }: BrowseableItemProps) {
       cursor="pointer"
       userSelect="none"
       opacity={opacity}
+      data-testid="browseable-item"
       onClick={() => onSelect(entry.id)}
       style={{ backgroundColor: 'white', transition: 'opacity 0.1s' }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      {/* {entry.tags && entry.tags.length > 0 && (
-        <Pane style={{ marginBottom: 4 }}>
-          <TagBar tags={entry.tags} onSave={() => null} frozen={true} />
-        </Pane>
-      )} */}
       <Strong color={theme.colors.primary} textAlign="left">
         {convertIsoDateToHumanReadable(entry.date)}
       </Strong>

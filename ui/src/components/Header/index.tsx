@@ -2,7 +2,7 @@ import React from 'react';
 import { Pane, Strong, Icon, IconComponent, Popover, Menu, Position } from 'evergreen-ui';
 import theme from '../../theme';
 
-type HeaderLink = {
+export type HeaderLink = {
   name: string;
   icon: IconComponent;
   disabled?: boolean;
@@ -29,7 +29,7 @@ export function Header({ links }: HeaderProps) {
           userSelect="none"
           pointerEvents={link.disabled ? 'none' : 'auto'}
           opacity={link.disabled ? 0.5 : 1}
-          onClick={link.onClick}
+          onClick={link.disabled ? () => null : link.onClick}
         >
           <Icon icon={link.icon} color={theme.colors.background} size={16} marginRight={8} />
           <Strong color={theme.colors.background}>{link.name}</Strong>
@@ -68,7 +68,7 @@ export function Header({ links }: HeaderProps) {
             userSelect="none"
             pointerEvents={link.disabled ? 'none' : 'auto'}
             opacity={link.disabled ? 0.5 : 1}
-            onClick={link.onClick}
+            onClick={link.disabled ? () => null : link.onClick}
           >
             <Icon icon={link.icon} color={theme.colors.background} size={16} marginRight={8} />
             <Strong color={theme.colors.background}>{link.name}</Strong>
