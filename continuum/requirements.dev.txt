@@ -36,6 +36,8 @@ flake8-pytest-style
 # Testing
 pytest
 pytest-django
+factory_boy
+pytest-mock
 
 # Formatting
 black
