@@ -7,7 +7,6 @@ from guardian.shortcuts import assign_perm
 from thought.tests.factories import TagFactory
 
 from thought.models import Tag
-from api.serializers import TagSerializer
 
 
 @pytest.fixture

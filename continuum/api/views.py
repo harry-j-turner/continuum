@@ -97,9 +97,10 @@ class EntryViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm("view_entry", entry):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        thought_data = request.data
-        thought_data["entry"] = entry.id
-        serializer = ThoughtSerializer(data=thought_data)
+        mutable_data = request.data.copy()
+        mutable_data["entry"] = entry.id
+        serializer = ThoughtSerializer(data=mutable_data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -114,8 +115,10 @@ class EntryViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         thought = get_object_or_404(Thought, id=thought_id, entry=entry)
-        request.data["entry"] = entry.id
-        serializer = ThoughtSerializer(thought, data=request.data)
+        mutable_data = request.data.copy()
+        mutable_data["entry"] = entry.id
+        serializer = ThoughtSerializer(thought, data=mutable_data)
+
         if serializer.is_valid():
             serializer.save()
 
