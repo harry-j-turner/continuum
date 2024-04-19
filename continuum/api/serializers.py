@@ -21,11 +21,16 @@ class ThoughtSerializer(serializers.ModelSerializer):
 
 
 class EntrySerializer(serializers.ModelSerializer):
-    thoughts = ThoughtSerializer(many=True, read_only=True, source="thought_set")
+    thoughts = serializers.SerializerMethodField()
 
     class Meta:
         model = Entry
         fields = "__all__"
+
+    def get_thoughts(self, obj):
+        # Assuming 'created' is the name of the field to sort by in the Thought model
+        queryset = obj.thought_set.all().order_by("created_at")
+        return ThoughtSerializer(queryset, many=True, read_only=True).data
 
     def validate(self, attrs):
         entry_date = attrs.get("date")
@@ -34,6 +39,6 @@ class EntrySerializer(serializers.ModelSerializer):
         # Use Django Guardian's get_objects_for_user to check if the user has permissions for any entries on the given date
         existing_entries = get_objects_for_user(user, "view_entry", klass=Entry).filter(date=entry_date)
         if existing_entries.exists():
-            raise ValidationError({"date": "An entry for this date already exists for you."})
+            raise serializers.ValidationError({"date": "An entry for this date already exists for you."})
 
         return attrs
