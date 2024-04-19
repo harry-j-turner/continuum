@@ -10,6 +10,8 @@ from guardian.shortcuts import assign_perm
 
 from thought.models import Entry, Tag, Thought
 
+ONBOARDING_CONTENT = [[{"content": "Welcome to Continuum. "}]]
+
 
 class User(AbstractUser):
     """Custom user model.

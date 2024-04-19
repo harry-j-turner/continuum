@@ -36,7 +36,9 @@ function Navigator() {
   // TODO: Add confidence bars back in.
 
   // Load all items on mount.
-  useEffect(() => refreshNavigator({}), []);
+  useEffect(() => {
+    refreshNavigator({});
+  }, []);
 
   const debouncedRefreshItems = useCallback(
     debounce((searchTerm: string) => {
