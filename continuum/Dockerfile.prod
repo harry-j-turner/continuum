@@ -51,4 +51,3 @@ RUN chown -R continuum:continuum $APP_HOME
 # Run
 USER continuum
 ENTRYPOINT ["/home/continuum/continuum/entrypoint.prod.sh"]
-# TODO: If this is built as a Docker image, why are we not pulling and running it from ECR?

@@ -15,25 +15,18 @@ if [ "$DATABASE" = "postgres" ]; then
     echo "PostgreSQL started"
 fi
 
-# Check the first argument to the script
+# Launch either Django or Celery.
 case "$1" in
     django)
-        # Perform Django setup
         python manage.py flush --no-input
         python manage.py migrate
-
-        # You can optionally include your seeding command if needed
         python manage.py seed
-
-        # Start the Django server
         python manage.py runserver 0.0.0.0:8000
         ;;
     celery)
-        # Start the Celery worker
         exec celery --app=continuum worker --loglevel=info
         ;;
     *)
-        # Default case or help case
         echo "Usage: $0 {django|celery}"
         exit 1
         ;;

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from guardian.shortcuts import get_perms
 from datetime import datetime
 from unittest.mock import Mock
+from datetime import timedelta
 from thought import tasks
 from user.models import Tag, Entry, Thought
 
@@ -22,14 +23,15 @@ def test_onboarding(mocker):
     # When - The user is onboarded.
     user.onboard()
 
-    # Then - The correct objects are created...
-
-    # Tag is created.
+    # Then - The tag is created.
     onboarding_tag = Tag.objects.get(name="onboarding")
     assert onboarding_tag.name == "onboarding"
     assert "view_tag" in get_perms(user, onboarding_tag)
 
-    # Entry is created.
-    today_entry = Entry.objects.filter(date=datetime.now().date()).first()
-    assert today_entry is not None
-    assert "view_entry" in get_perms(user, today_entry)
+    # And - Four entries are created and they have (some) thoughts.
+    for day in [0, 1, 2, 3]:
+        date = datetime.now().date() - timedelta(days=day)
+        entry = Entry.objects.filter(date=date).first()
+        assert entry is not None
+        assert "view_entry" in get_perms(user, entry)
+        assert entry.thought_set.count() > 0
