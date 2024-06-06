@@ -127,7 +127,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 
 resource "aws_key_pair" "continuum_key" {
   key_name   = "continuum_key"
-  public_key = file("/home/harry_turner/.ssh/ssh.continuum.com.pub")
+  public_key = file("/home/harry/.ssh/api.continuum-journal.com.pub")
 }
 
 resource "aws_instance" "server" {
@@ -141,6 +141,12 @@ resource "aws_instance" "server" {
 
   user_data = <<-EOF
               #!/bin/bash           
+
+              sudo yum install cronie -y
+              sudo systemctl start crond
+              sudo systemctl enable crond
+              (crontab -l 2>/dev/null; echo "*/10 * * * * /home/ec2-user/watch.sh >> /home/ec2-user/watch.log 2>&1") | crontab -
+
               sudo yum install docker -y
               sudo service docker start
               sudo usermod -aG docker ec2-user

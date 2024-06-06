@@ -219,7 +219,7 @@ function TasksList() {
   return (
     <Pane width="100%" display="flex" flexDirection="column">
       {/* Content */}
-      <Pane flex={1} padding={16} display="flex" flexDirection="column" alignItems="flex-start">
+      <Pane flex={1} padding={16} display="flex" flexDirection="column" alignItems="flex-start" marginBottom={64}>
         <Button appearance="primary" marginBottom={16} width="100%" borderRadius={4} onClick={handleCreateTask}>
           Add New Task
         </Button>
