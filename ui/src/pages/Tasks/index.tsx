@@ -7,7 +7,9 @@ import {
   ArrowRightIcon,
   Popover,
   Position,
-  NotificationsSnoozeIcon
+  NotificationsSnoozeIcon,
+  TrashIcon,
+  toaster
 } from 'evergreen-ui';
 import { Tag, Task } from '../../types';
 import { Pane } from 'evergreen-ui';
@@ -64,6 +66,7 @@ interface TaskDetailProps {
   onSnoozeTask: (date: Date) => void;
   onChangeTags: (tags: string[]) => void;
   onUpdateTags: (tags: Tag[]) => void;
+  onDeleteTask: () => void;
 }
 
 function TaskDetail({
@@ -75,7 +78,8 @@ function TaskDetail({
   onIgnoreTask,
   onSnoozeTask,
   onChangeTags,
-  onUpdateTags
+  onUpdateTags,
+  onDeleteTask
 }: TaskDetailProps) {
   const [name, setName] = useState<string>(task.name);
   const [content, setContent] = useState<string>(task.notes);
@@ -124,17 +128,31 @@ function TaskDetail({
               onSnoozeTask(selectedDate);
             }}
           />
-          <Button
-            iconAfter={TickCircleIcon}
-            appearance="secondary"
-            intent="success"
-            onClick={onCompleteTask}
-            marginTop={16}
-            width="100%"
-            height={64}
-          >
-            Mark Complete
-          </Button>
+          <Pane display="flex" flexDirection="row" width="100%" justifyContent="space-between">
+            <Button
+              iconAfter={TrashIcon}
+              appearance="secondary"
+              intent="success"
+              onClick={onDeleteTask}
+              marginTop={16}
+              marginRight={8}
+              height={64}
+              paddingRight={40}
+            />
+
+            <Button
+              iconAfter={TickCircleIcon}
+              appearance="secondary"
+              intent="danger"
+              onClick={onCompleteTask}
+              marginTop={16}
+              width="100%"
+              marginLeft={8}
+              height={64}
+            >
+              Done
+            </Button>
+          </Pane>
         </Pane>
       </Pane>
     </Pane>
@@ -233,6 +251,17 @@ function TasksList() {
     });
   }, [api]);
 
+  const handleDeleteTask = useCallback(() => {
+    if (!currentTask) return;
+    api.deleteTask({ id: currentTask.id }).then(() => {
+      toaster.success('Task deleted');
+      api.listTasks().then((tasks) => {
+        if (!tasks) return;
+        setCurrentTask(tasks[0]);
+      });
+    });
+  }, [currentTask, api]);
+
   useEffect(() => {
     api.listTasks().then((tasks) => {
       if (!tasks) return;
@@ -262,6 +291,7 @@ function TasksList() {
             onSnoozeTask={handleSnoozeTask}
             onChangeTags={handleChangeTags}
             onUpdateTags={handleUpdateTags}
+            onDeleteTask={handleDeleteTask}
           />
         )}
       </Pane>

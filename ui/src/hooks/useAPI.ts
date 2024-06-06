@@ -225,6 +225,12 @@ const useAPI = () => {
     return data;
   };
 
+  const deleteTask = async ({ id }: DeleteTag): Promise<void | null> => {
+    const response = await callAPI(`tasks/${id}/`, {}, 'DELETE');
+    if (!response) return null;
+    return;
+  };
+
   // Report API
   // ##########
 
@@ -249,7 +255,8 @@ const useAPI = () => {
     generateReport,
     listTasks,
     updateTask,
-    createTask
+    createTask,
+    deleteTask
   };
 };
 
