@@ -14,7 +14,7 @@ import {
 } from 'evergreen-ui';
 
 import { Pane } from 'evergreen-ui';
-import { store, AppDispatch } from './state/store';
+import { store, AppDispatch, selectItem } from './state/store';
 
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
@@ -37,6 +37,7 @@ function AuthenticatedApp() {
   const { getAccessTokenSilently, logout } = useAuth0();
   const token = useSelector(selectToken);
   const username = useSelector(selectUsername);
+  const entry = useSelector(selectItem);
   const tagManagerRef = React.useRef<TagManagerRef>(null);
   const [page, setPage] = React.useState<'home' | 'reports' | 'tasks'>('home');
 
@@ -139,6 +140,41 @@ function AuthenticatedApp() {
 
   if (!token) return <LoadingScreen />;
 
+  const webJournal = (
+    <>
+      <Pane
+        width="25%"
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        borderRadius={4}
+        margin={16}
+        marginRight={0}
+      >
+        <Navigator />
+      </Pane>
+
+      <Pane width="75%" display="flex" flexDirection="column" borderRadius={4} margin={16} flex="1">
+        <ActiveItem />
+      </Pane>
+    </>
+  );
+
+  const mobileJournal = (
+    <>
+      <Pane
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        borderRadius={4}
+        margin={16}
+      >
+        {entry ? <ActiveItem /> : <Navigator />}
+      </Pane>
+    </>
+  );
+
   return (
     <Pane
       height="100vh"
@@ -151,27 +187,9 @@ function AuthenticatedApp() {
 
       <TagManager ref={tagManagerRef} />
 
-      {/* Take background image from public/mountain_background.png */}
       <Pane className="App" width="100%" flex="1" display="flex">
-        {page === 'home' && (
-          <>
-            <Pane
-              width="25%"
-              display="flex"
-              flexDirection="column"
-              justifyContent="space-between"
-              borderRadius={4}
-              margin={16}
-              marginRight={0}
-            >
-              <Navigator />
-            </Pane>
-
-            <Pane width="75%" display="flex" flexDirection="column" borderRadius={4} margin={16} flex="1">
-              <ActiveItem />
-            </Pane>
-          </>
-        )}
+        {page === 'home' && window.innerWidth >= 800 && webJournal}
+        {page === 'home' && window.innerWidth < 800 && mobileJournal}
         {page === 'reports' && <Analysis />}
         {page === 'tasks' && <TasksList />}
       </Pane>

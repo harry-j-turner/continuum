@@ -27,7 +27,8 @@ function Navigator() {
     ({ searchTerm }: { searchTerm?: string }) => {
       api.listEntries({ searchTerm }).then((items) => {
         if (items) dispatch(setEntries(items));
-        if (items && !activeItem && items.length > 0) dispatch(setEntry({ entry: items[0] }));
+        if (window.innerWidth >= 800 && items && !activeItem && items.length > 0)
+          dispatch(setEntry({ entry: items[0] }));
       });
     },
     [dispatch]

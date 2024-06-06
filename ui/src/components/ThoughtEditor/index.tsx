@@ -43,12 +43,21 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
   );
 
   return (
-    <Pane key={thought.id} marginBottom={16} backgroundColor="rgba(255, 255, 255, 0.7)" padding={16} borderRadius={4}>
+    <Pane
+      width="100%"
+      key={thought.id}
+      marginBottom={16}
+      backgroundColor="rgba(255, 255, 255, 0.7)"
+      padding={16}
+      borderRadius={4}
+    >
       <Pane display="flex" justifyContent="space-between" marginBottom={16}>
         <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={updateTags} allTags={allTags} />
-        <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon} disabled={isDisabled}>
-          Delete
-        </Button>
+        {window.innerWidth > 800 && (
+          <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon} disabled={isDisabled}>
+            Delete
+          </Button>
+        )}
       </Pane>
       <EditableText
         disabled={isDisabled}

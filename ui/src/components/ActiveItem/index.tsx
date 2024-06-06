@@ -1,7 +1,7 @@
 import '../../App.css';
 import React, { useCallback, useEffect } from 'react';
 import theme from '../../theme';
-import { Button, CleanIcon, Heading, Icon, PlusIcon } from 'evergreen-ui';
+import { Button, CleanIcon, Heading, Icon, IconButton, PlusIcon } from 'evergreen-ui';
 import { Tag, Thought } from '../../types';
 import { Pane } from 'evergreen-ui';
 import { AppDispatch, selectItem as selectEntry } from '../../state/store';
@@ -12,6 +12,7 @@ import ThoughtEditor from '../ThoughtEditor';
 import useAPI from '../../hooks/useAPI';
 import { setEntry } from '../../state/item';
 import * as Sentry from '@sentry/react';
+import { ArrowLeft } from '@blueprintjs/icons';
 
 function ActiveItem() {
   const activeEntry = useSelector(selectEntry);
@@ -69,6 +70,10 @@ function ActiveItem() {
     [activeEntry, dispatch]
   );
 
+  const cancelActiveItem = useCallback(() => {
+    dispatch(setEntry({ entry: null }));
+  }, [dispatch]);
+
   const todaysDate = new Date().toDateString();
   const entryDate = activeEntry ? new Date(activeEntry.date).toDateString() : '';
   const isCurrentDate = todaysDate === entryDate;
@@ -106,10 +111,11 @@ function ActiveItem() {
       flex="1"
       maxHeight="calc(100vh - 80px)"
       position="relative"
-      paddingLeft={16}
+      paddingLeft={window.innerWidth > 800 ? 16 : 0}
     >
       <Pane display="flex" flexDirection="row" alignItems="center" justifyContent="space-between" width="100%">
-        {/* Header showing entry date in human-readable format */}
+        <IconButton icon={ArrowLeft} onClick={cancelActiveItem} />
+
         <Heading size={700} color={theme.colors.white}>
           {new Date(activeEntry.date).toDateString()}
         </Heading>
@@ -122,8 +128,8 @@ function ActiveItem() {
           <Pane />
         )}
       </Pane>
-      <Pane flex="1" width="100%" className="browseBodyNoScrollbar" marginTop={16}>
-        <Pane width="100%" flex={1} display="flex" flexDirection="column">
+      <Pane flex="1" className="browseBodyNoScrollbar" marginTop={16}>
+        <Pane flex={1} display="flex" flexDirection="column">
           {activeEntry.thoughts.map((thought) => (
             <ThoughtEditor
               isDisabled={!isCurrentDate}
