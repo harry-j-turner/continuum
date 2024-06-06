@@ -1,4 +1,4 @@
-import { Thought, Tag, Entry } from '../types';
+import { Thought, Tag, Entry, Task } from '../types';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../state/profile';
 
@@ -10,7 +10,7 @@ const API_BASE_URL =
 
 type Entity = Thought | Tag | Entry;
 
-type DjangoListResponse = {
+type DjangoPaginatedResponse = {
   count: number;
   next: string | null;
   previous: string | null;
@@ -97,7 +97,7 @@ const useAPI = () => {
 
     const response = await callAPI(`entries/?${params.toString()}`);
     if (!response) return null;
-    const data: DjangoListResponse = await response.json();
+    const data: DjangoPaginatedResponse = await response.json();
     return data.results as Entry[];
   };
 
@@ -178,7 +178,7 @@ const useAPI = () => {
   const listTags = async (): Promise<Tag[] | null> => {
     const response = await callAPI('tags/');
     if (!response) return null;
-    const data: DjangoListResponse = await response.json();
+    const data: DjangoPaginatedResponse = await response.json();
     return data.results as Tag[];
   };
 
@@ -190,6 +190,39 @@ const useAPI = () => {
     const response = await callAPI(`tags/${id}/`, {}, 'DELETE');
     if (!response) return null;
     return;
+  };
+
+  // Tasks API
+  // #########
+
+  interface UpdateTask {
+    taskID: string;
+    task: Partial<Task>;
+  }
+
+  interface CreateTask {
+    task: Omit<Task, 'id'>;
+  }
+
+  const createTask = async ({ task }: CreateTask): Promise<Task | null> => {
+    const response = await callAPI('tasks/', task, 'POST');
+    if (!response) return null;
+    const data: Task = await response.json();
+    return data;
+  };
+
+  const listTasks = async (): Promise<Task[] | null> => {
+    const response = await callAPI('tasks/');
+    if (!response) return null;
+    const data: Task[] = await response.json();
+    return data as Task[];
+  };
+
+  const updateTask = async ({ taskID, task }: UpdateTask): Promise<Task | null> => {
+    const response = await callAPI(`tasks/${taskID}/`, task, 'PATCH');
+    if (!response) return null;
+    const data: Task = await response.json();
+    return data;
   };
 
   // Report API
@@ -213,7 +246,10 @@ const useAPI = () => {
     createTag,
     listTags,
     deleteTag,
-    generateReport
+    generateReport,
+    listTasks,
+    updateTask,
+    createTask
   };
 };
 

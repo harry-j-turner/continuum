@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from thought.models import Entry, Tag, Thought
+from thought.models import Entry, Tag, Thought, Task
 from user.models import User
 from datetime import datetime
 from datetime import timedelta
@@ -32,8 +32,12 @@ class Command(BaseCommand):
         tag_projects, _ = Tag.objects.get_or_create(
             name="projects", description="For thoughts about projects.", colour="rgb(181,157,164)"
         )
+        tag_misc, _ = Tag.objects.get_or_create(
+            name="misc", description="For thoughts about anything else.", colour="rgb(181,157,164)"
+        )
         assign_perm("view_tag", henry, tag_sleep)
         assign_perm("view_tag", henry, tag_projects)
+        assign_perm("view_tag", henry, tag_misc)
 
         self.stdout.write(self.style.HTTP_INFO("Creating entry 1..."))
         entry_1, _ = Entry.objects.get_or_create(date=today)
@@ -117,5 +121,11 @@ class Command(BaseCommand):
             mood=5,
         )
         item_9.tags.set([tag_projects])
+        task_1, _ = Task.objects.get_or_create(name="Centour MVP")
+        task_1.tags.set([tag_projects])
+        assign_perm("view_task", henry, task_1)
+        task_2, _ = Task.objects.get_or_create(name="Add Kent Dodds to morning brew.")
+        task_2.tags.set([tag_misc])
+        assign_perm("view_task", henry, task_2)
 
         self.stdout.write(self.style.SUCCESS("Successfully seeded database."))

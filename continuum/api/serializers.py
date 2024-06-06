@@ -3,7 +3,7 @@ import logging
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from thought.models import Entry, Tag, Thought
+from thought.models import Entry, Tag, Thought, Task
 
 logger = logging.getLogger(__name__)
 
@@ -42,3 +42,9 @@ class EntrySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"date": "An entry for this date already exists for you."})
 
         return attrs
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = "__all__"

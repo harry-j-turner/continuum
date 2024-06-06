@@ -1,17 +1,19 @@
 from logging import getLogger
 
-from api.serializers import EntrySerializer, TagSerializer, ThoughtSerializer
+from api.serializers import EntrySerializer, TagSerializer, ThoughtSerializer, TaskSerializer
 from django.contrib.postgres.search import SearchVector
 from django.shortcuts import get_object_or_404
 from django.utils.dateparse import parse_date
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.db.models import Q
 from guardian.shortcuts import assign_perm, get_objects_for_user
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from thought.models import Entry, Tag, Thought
+from thought.models import Entry, Tag, Thought, Task
 from thought.tasks import extract_mood, extract_actions
 
 logger = getLogger(__name__)
@@ -38,6 +40,28 @@ class TagViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         tag = serializer.save()
         assign_perm("view_tag", self.request.user, tag)
+
+
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """This method should return the list of tasks for the currently authenticated user."""
+        queryset = get_objects_for_user(self.request.user, "view_task", klass=Task)
+
+        if self.action == "list":
+
+            today = timezone.now().date()
+            queryset = queryset.filter(Q(snooze__isnull=True) | Q(snooze__lte=today))
+            queryset = queryset.order_by("updated_at")[:10]
+
+        return queryset
+
+    def perform_create(self, serializer):
+        task = serializer.save()
+        assign_perm("view_task", self.request.user, task)
 
 
 class EntryViewSet(viewsets.ModelViewSet):

@@ -39,7 +39,7 @@ export function Header({ links }: HeaderProps) {
       _links.push(
         <Popover
           position={Position.BOTTOM_RIGHT}
-          content={
+          content={({ close }) => (
             <Menu>
               <Menu.Group>
                 {link.subHeadings?.map((subHeading) => (
@@ -47,7 +47,10 @@ export function Header({ links }: HeaderProps) {
                     userSelect="none"
                     key={subHeading.name}
                     icon={subHeading.icon}
-                    onSelect={subHeading.onClick}
+                    onSelect={() => {
+                      subHeading.onClick();
+                      close();
+                    }}
                     disabled={subHeading.disabled}
                     cursor={subHeading.disabled ? null : 'pointer'}
                   >
@@ -56,7 +59,7 @@ export function Header({ links }: HeaderProps) {
                 ))}
               </Menu.Group>
             </Menu>
-          }
+          )}
         >
           <Pane
             display="flex"

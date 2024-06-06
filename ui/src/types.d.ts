@@ -19,3 +19,16 @@ export type Tag = {
   description: string;
   colour: string;
 };
+
+export type Task = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  name: string;
+  notes: string;
+  tags: Tag[];
+  snooze: string | null;
+  is_evergreen: boolean;
+  is_completed: boolean;
+  is_ideal: boolean;
+};

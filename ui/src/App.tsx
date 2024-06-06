@@ -1,7 +1,17 @@
 import './App.css';
 import React, { useEffect } from 'react';
 import theme from './theme';
-import { Button, CodeIcon, EditIcon, LogOutIcon, PersonIcon, ThemeProvider, TimelineLineChartIcon } from 'evergreen-ui';
+import {
+  Button,
+  CodeIcon,
+  EditIcon,
+  FormIcon,
+  LogOutIcon,
+  MenuIcon,
+  PersonIcon,
+  ThemeProvider,
+  TimelineLineChartIcon
+} from 'evergreen-ui';
 
 import { Pane } from 'evergreen-ui';
 import { store, AppDispatch } from './state/store';
@@ -20,6 +30,7 @@ import { LoadingScreen } from './components/LoadingScreen';
 import TagManager, { TagManagerRef } from './fragments/TagManager/TagManagerRef';
 import { version } from './version';
 import Analysis from './pages/Analysis';
+import TasksList from './pages/Tasks';
 
 function AuthenticatedApp() {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,7 +38,7 @@ function AuthenticatedApp() {
   const token = useSelector(selectToken);
   const username = useSelector(selectUsername);
   const tagManagerRef = React.useRef<TagManagerRef>(null);
-  const [page, setPage] = React.useState<'home' | 'reports'>('home');
+  const [page, setPage] = React.useState<'home' | 'reports' | 'tasks'>('home');
 
   useEffect(() => {
     getAccessTokenSilently().then((accessToken) => {
@@ -47,6 +58,85 @@ function AuthenticatedApp() {
     });
   }, []);
 
+  const webLinks = [
+    {
+      name: 'Journal',
+      icon: EditIcon,
+      onClick: () => setPage('home')
+    },
+    {
+      name: 'Analysis',
+      icon: TimelineLineChartIcon,
+      onClick: () => setPage('reports')
+    },
+    {
+      name: 'Account',
+      icon: PersonIcon,
+      onClick: () => null,
+      subHeadings: [
+        {
+          name: username ?? 'Unknown',
+          icon: PersonIcon,
+          disabled: true,
+          onClick: () => null
+        },
+        {
+          name: `Version: ${version}`,
+          icon: CodeIcon,
+          disabled: true,
+          onClick: () => null
+        },
+        {
+          name: 'Logout',
+          icon: LogOutIcon,
+          onClick: () => logout()
+        }
+      ]
+    }
+  ];
+
+  const mobileLinks = [
+    {
+      name: 'Menu',
+      icon: MenuIcon,
+      onClick: () => null,
+      subHeadings: [
+        {
+          name: username ?? 'Unknown',
+          icon: PersonIcon,
+          disabled: true,
+          onClick: () => null
+        },
+        {
+          name: `Version: ${version}`,
+          icon: CodeIcon,
+          disabled: true,
+          onClick: () => null
+        },
+        {
+          name: 'Journal',
+          icon: EditIcon,
+          onClick: () => setPage('home')
+        },
+        {
+          name: 'Tasks',
+          icon: FormIcon,
+          onClick: () => setPage('tasks')
+        },
+        {
+          name: 'Analysis',
+          icon: TimelineLineChartIcon,
+          onClick: () => setPage('reports')
+        },
+        {
+          name: 'Logout',
+          icon: LogOutIcon,
+          onClick: () => logout()
+        }
+      ]
+    }
+  ];
+
   if (!token) return <LoadingScreen />;
 
   return (
@@ -57,44 +147,7 @@ function AuthenticatedApp() {
       display="flex"
       flexDirection="column"
     >
-      <Header
-        links={[
-          {
-            name: 'Journal',
-            icon: EditIcon,
-            onClick: () => setPage('home')
-          },
-          {
-            name: 'Analysis',
-            icon: TimelineLineChartIcon,
-            onClick: () => setPage('reports')
-          },
-          {
-            name: 'Account',
-            icon: PersonIcon,
-            onClick: () => null,
-            subHeadings: [
-              {
-                name: username ?? 'Unknown',
-                icon: PersonIcon,
-                disabled: true,
-                onClick: () => null
-              },
-              {
-                name: `Version: ${version}`,
-                icon: CodeIcon,
-                disabled: true,
-                onClick: () => null
-              },
-              {
-                name: 'Logout',
-                icon: LogOutIcon,
-                onClick: () => logout()
-              }
-            ]
-          }
-        ]}
-      />
+      <Header links={window.innerWidth > 800 ? webLinks : mobileLinks} />
 
       <TagManager ref={tagManagerRef} />
 
@@ -120,6 +173,7 @@ function AuthenticatedApp() {
           </>
         )}
         {page === 'reports' && <Analysis />}
+        {page === 'tasks' && <TasksList />}
       </Pane>
     </Pane>
   );
@@ -132,49 +186,6 @@ function LoginScreen() {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
 
   if (isLoading) return null;
-
-  if (window.innerWidth < 500) {
-    return (
-      <Pane
-        width="100%"
-        height="100vh"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        style={{
-          backgroundImage: bgImage,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        <img src="continuum_logo_white.png" alt="Continuum Logo" width={100} height={100} />
-        <h1
-          style={{
-            fontSize: 72,
-            fontWeight: 300,
-            fontFamily: 'Oxygen',
-            color: theme.colors.white
-          }}
-        >
-          Continuum
-        </h1>
-        <p
-          style={{
-            fontSize: 20,
-            fontWeight: 300,
-            fontFamily: 'Oxygen',
-            color: theme.colors.white,
-            width: '80%',
-            textAlign: 'center'
-          }}
-        >
-          It looks like you're using a mobile device. Mobile support is on the way, in the meantime please use a desktop
-          to access the app.
-        </p>
-      </Pane>
-    );
-  }
 
   if (!isAuthenticated) {
     return (

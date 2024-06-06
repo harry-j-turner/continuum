@@ -2,7 +2,7 @@ from django.contrib import admin
 from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import get_users_with_perms
 
-from .models import Entry, Tag, Thought
+from .models import Entry, Tag, Thought, Task
 
 
 @admin.register(Tag)
@@ -33,3 +33,9 @@ class EntryAdmin(GuardedModelAdmin):
 class ThoughtAdmin(GuardedModelAdmin):
     list_display = ["content", "entry", "created_at", "updated_at"]
     search_fields = ["content", "entry__id"]
+
+
+@admin.register(Task)
+class TaskAdmin(GuardedModelAdmin):
+    list_display = ["name", "created_at", "updated_at"]
+    search_fields = ["name"]

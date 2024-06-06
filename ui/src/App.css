@@ -65,3 +65,12 @@
   background: transparent;
   font-size: 1rem;
 }
+
+.task-editor-editable-name {
+  text-align: start;
+  cursor: pointer;
+  color: #394e5c;
+  background-color: transparent;
+  background: transparent;
+  font-size: 1rem;
+}

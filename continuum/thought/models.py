@@ -47,3 +47,23 @@ class Entry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     date = models.DateField()
+
+
+class Task(models.Model):
+    """Task Model."""
+
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    name = models.CharField(max_length=100)
+    notes = models.TextField(blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    snooze = models.DateTimeField(null=True)
+
+    is_evergreen = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
+    is_ideal = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
