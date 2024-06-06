@@ -119,7 +119,7 @@ function AuthenticatedApp() {
           onClick: () => setPage('home')
         },
         {
-          name: 'Tasks',
+          name: 'Threads',
           icon: FormIcon,
           onClick: () => setPage('tasks')
         },

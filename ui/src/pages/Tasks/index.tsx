@@ -9,7 +9,8 @@ import {
   Position,
   NotificationsSnoozeIcon,
   TrashIcon,
-  toaster
+  toaster,
+  PlusIcon
 } from 'evergreen-ui';
 import { Tag, Task } from '../../types';
 import { Pane } from 'evergreen-ui';
@@ -150,7 +151,7 @@ function TaskDetail({
               marginLeft={8}
               height={64}
             >
-              Done
+              Finish
             </Button>
           </Pane>
         </Pane>
@@ -162,7 +163,7 @@ function TaskDetail({
 function makeDefaultTask(): Task {
   return {
     id: '0',
-    name: 'New Task',
+    name: 'New Thread',
     notes: '',
     is_completed: false,
     created_at: new Date().toISOString(),
@@ -276,8 +277,15 @@ function TasksList() {
     <Pane width="100%" display="flex" flexDirection="column">
       {/* Content */}
       <Pane flex={1} padding={16} display="flex" flexDirection="column" alignItems="flex-start" marginBottom={64}>
-        <Button appearance="primary" marginBottom={16} width="100%" borderRadius={4} onClick={handleCreateTask}>
-          Add New Task
+        <Button
+          iconAfter={PlusIcon}
+          appearance="primary"
+          marginBottom={16}
+          width="40%"
+          borderRadius={4}
+          onClick={handleCreateTask}
+        >
+          Start New Thread
         </Button>
         {currentTask && (
           <TaskDetail
