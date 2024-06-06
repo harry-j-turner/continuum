@@ -55,6 +55,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
             today = timezone.now().date()
             queryset = queryset.filter(Q(snooze__isnull=True) | Q(snooze__lte=today))
+            queryset = queryset.filter(is_completed=False)
             queryset = queryset.order_by("updated_at")[:10]
 
         return queryset
