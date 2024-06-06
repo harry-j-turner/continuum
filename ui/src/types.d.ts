@@ -26,7 +26,7 @@ export type Task = {
   updated_at: string;
   name: string;
   notes: string;
-  tags: Tag[];
+  tags: string[];
   snooze: string | null;
   is_evergreen: boolean;
   is_completed: boolean;

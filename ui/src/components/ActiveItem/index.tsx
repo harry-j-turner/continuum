@@ -19,9 +19,9 @@ function ActiveItem() {
   const dispatch = useDispatch<AppDispatch>();
 
   const [allTags, setAllTags] = React.useState<Tag[]>([]);
+
   useEffect(() => {
     api.listTags().then((tags) => {
-      console.log(tags?.map((tag) => tag.name));
       if (tags) setAllTags(tags);
     });
   }, []);

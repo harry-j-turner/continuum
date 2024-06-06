@@ -9,12 +9,13 @@ import {
   Position,
   NotificationsSnoozeIcon
 } from 'evergreen-ui';
-import { Task } from '../../types';
+import { Tag, Task } from '../../types';
 import { Pane } from 'evergreen-ui';
 
 import useAPI from '../../hooks/useAPI';
 import { EditableText } from '@blueprintjs/core';
 import { DatePicker3 } from '@blueprintjs/datetime2';
+import TagBar from '../../components/TagBar';
 
 interface SnoozePickerProps {
   handleDateChange: (selectedDate: Date | null) => void;
@@ -55,29 +56,36 @@ function SnoozePicker({ handleDateChange }: SnoozePickerProps) {
 
 interface TaskDetailProps {
   task: Task;
+  allTags: Tag[];
   onChangeName: (name: string) => void;
   onChangeContent: (content: string) => void;
   onCompleteTask: () => void;
   onIgnoreTask: () => void;
   onSnoozeTask: (date: Date) => void;
+  onChangeTags: (tags: string[]) => void;
+  onUpdateTags: (tags: Tag[]) => void;
 }
 
 function TaskDetail({
   task,
+  allTags,
   onChangeName,
   onChangeContent,
   onCompleteTask,
   onIgnoreTask,
-  onSnoozeTask
+  onSnoozeTask,
+  onChangeTags,
+  onUpdateTags
 }: TaskDetailProps) {
   const [name, setName] = useState<string>(task.name);
   const [content, setContent] = useState<string>(task.notes);
 
   return (
-    <Pane backgroundColor="rgba(255, 255, 255, 0.7)" padding={32} borderRadius={4} flex={1} width="100%">
+    <Pane backgroundColor="rgba(255, 255, 255, 0.7)" padding={16} borderRadius={4} flex={1} width="100%">
       <Pane display="flex" flexDirection="column" width="100%" alignItems="flex-start" flex={1} height="100%">
         <Pane>
-          <Heading size={800} marginBottom={16} textAlign="left">
+          <TagBar tags={task.tags} onSave={onChangeTags} updateTags={onUpdateTags} allTags={allTags} />
+          <Heading size={800} marginBottom={16} textAlign="left" marginTop={16}>
             <EditableText
               multiline
               defaultValue={name}
@@ -108,7 +116,7 @@ function TaskDetail({
             width="100%"
             height={64}
           >
-            Continue
+            Next
           </Button>
           <SnoozePicker
             handleDateChange={(selectedDate) => {
@@ -136,8 +144,8 @@ function TaskDetail({
 function makeDefaultTask(): Task {
   return {
     id: '0',
-    name: 'Task Name',
-    notes: 'Task Notes',
+    name: 'New Task',
+    notes: '',
     is_completed: false,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -151,6 +159,14 @@ function makeDefaultTask(): Task {
 function TasksList() {
   const api = useAPI();
   const [currentTask, setCurrentTask] = React.useState<Task | null>(null);
+  const [allTags, setAllTags] = React.useState<Tag[]>([]);
+
+  const handleUpdateTags = useCallback(
+    (tags: Tag[]) => {
+      setAllTags(tags);
+    },
+    [setAllTags]
+  );
 
   const handleChangeName = useCallback(
     (name: string) => {
@@ -201,6 +217,14 @@ function TasksList() {
     [currentTask, api]
   );
 
+  const handleChangeTags = useCallback(
+    (tags: string[]) => {
+      if (!currentTask) return;
+      api.updateTask({ taskID: currentTask.id, task: { tags } });
+    },
+    [currentTask, api]
+  );
+
   const handleCreateTask = useCallback(() => {
     const newTask = makeDefaultTask();
     api.createTask({ task: newTask }).then((task) => {
@@ -213,6 +237,9 @@ function TasksList() {
     api.listTasks().then((tasks) => {
       if (!tasks) return;
       setCurrentTask(tasks[0]);
+    });
+    api.listTags().then((tags) => {
+      if (tags) setAllTags(tags);
     });
   }, []);
 
@@ -227,11 +254,14 @@ function TasksList() {
           <TaskDetail
             key={currentTask.id}
             task={currentTask}
+            allTags={allTags}
             onChangeName={handleChangeName}
             onChangeContent={handleChangeContent}
             onCompleteTask={handleCompleteTask}
             onIgnoreTask={handleContinue}
             onSnoozeTask={handleSnoozeTask}
+            onChangeTags={handleChangeTags}
+            onUpdateTags={handleUpdateTags}
           />
         )}
       </Pane>
