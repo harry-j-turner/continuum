@@ -10,9 +10,7 @@ User = get_user_model()
 
 
 class Auth0Authentication(authentication.BaseAuthentication):
-
     def authenticate(self, request):
-
         jwt_authenticator = JWTAuthentication()
         header = jwt_authenticator.get_header(request)
 
@@ -26,7 +24,6 @@ class Auth0Authentication(authentication.BaseAuthentication):
         user, created = User.objects.get_or_create(sub=payload.get("sub"))
 
         if created:
-
             endpoint = settings.SIMPLE_JWT.get("USER_INFO_ENDPOINT", None)
             user_info = requests.get(endpoint, headers={"Authorization": header}).json()
 

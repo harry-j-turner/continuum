@@ -5,7 +5,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("thought", "0003_thought_actions_thought_mood"),
     ]

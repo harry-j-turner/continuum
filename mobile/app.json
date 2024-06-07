@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "valkyrie",
+    "slug": "valkyrie",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.ravonic.carecrow.client"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7f60a5e8-5309-43b7-9925-6142f734e56d"
+      }
+    },
+    "owner": "ravonic",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7f60a5e8-5309-43b7-9925-6142f734e56d"
+    },
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "ravonic",
+          "project": "valkyrie"
+        }
+      ],
+      "./plugins/custom-android-styles.js"
+    ]
+  }
+}

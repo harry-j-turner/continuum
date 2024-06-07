@@ -4,7 +4,6 @@ from thought.models import Entry, Thought, Tag
 
 
 class TagFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = Tag
 

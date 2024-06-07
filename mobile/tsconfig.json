@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "include": ["src/**/*", "App.tsx"],
+  "types": ["node", "jest", "@testing-library/jest-dom"],
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "jsx": "react-native"
+  }
+}

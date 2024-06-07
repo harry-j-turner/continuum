@@ -1,0 +1,35 @@
+{
+  "cli": {
+    "version": ">= 5.4.0"
+  },
+  "build": {
+    "development": {
+      "distribution": "internal",
+      "developmentClient": true,
+      "android": {
+        "gradleCommand": ":app:assembleDebug",       
+        "env": {
+          "ENVIRONMENT": "development"
+        }
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "android": {
+        "gradleCommand": ":app:assembleRelease",       
+        "env": {
+          "ENVIRONMENT": "production"
+        }
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "path/to/service-account-key.json",
+        "track": "production",
+        "releaseStatus": "completed"
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+### What is a thread?
+
+An activity or goal on which you make progress in intervals until it is complete. The key difference between a task and a thread is that a task is started, worked on, and completed in one sitting, whereas a thread is started and paused several times before it is eventually completed. For example, organising the sending of a gift for someones birthday would be considered a thread if you first asked them what they wanted, waited for them to reply, purchased the gift, waited for it to arrive, wrapped it up, then took it to the postoffice a few days later. Each of these activities would be completed in and amongst the rest of your daily tasks, you wouldn't work exclusively on this until it was complete. Yet they all form part of the same activity.
