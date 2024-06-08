@@ -1,53 +1,45 @@
 {
   "expo": {
-    "name": "valkyrie",
-    "slug": "valkyrie",
-    "version": "0.1.0",
+    "name": "continuum",
+    "slug": "continuum",
+    "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ravonic.carecrow.client"
+      "package": "com.harryoptimised.continuum"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "7f60a5e8-5309-43b7-9925-6142f734e56d"
-      }
-    },
-    "owner": "ravonic",
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/7f60a5e8-5309-43b7-9925-6142f734e56d"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "ravonic",
-          "project": "valkyrie"
-        }
-      ],
-      "./plugins/custom-android-styles.js"
-    ]
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "0e41ef3f-b4d4-4b76-8ff1-3784c4fb0ae3"
+      }
+    }
   }
 }

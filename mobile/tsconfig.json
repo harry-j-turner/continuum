@@ -1,9 +1,17 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",
-  "include": ["src/**/*", "App.tsx"],
-  "types": ["node", "jest", "@testing-library/jest-dom"],
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "moduleResolution": "node",
-    "jsx": "react-native"
-  }
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }
