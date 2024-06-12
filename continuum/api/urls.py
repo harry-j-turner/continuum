@@ -4,8 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r"tags", views.TagViewSet)
-router.register(r"entries", views.EntryViewSet, basename="entry")
-router.register(r"tasks", views.TaskViewSet)
+router.register(r"thoughts", views.ThoughtViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

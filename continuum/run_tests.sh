@@ -12,5 +12,5 @@ export TESTING=1
 
 cd "$(dirname "$0")"
 source venv/bin/activate
-python -m pytest  || exit 1
+python -m pytest -p no:warnings || exit 1
 deactivate

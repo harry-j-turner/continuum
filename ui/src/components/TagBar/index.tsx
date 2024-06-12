@@ -10,6 +10,7 @@ interface TagBarProps {
   allTags: Tag[];
   onSave: (tags: string[]) => void;
   updateTags: (tags: Tag[]) => void;
+  padding?: number;
 }
 
 const getRandomTagColour = () => {
@@ -20,7 +21,7 @@ const getRandomTagColour = () => {
   return `rgb(${r},${g},${b})`;
 };
 
-const TagBar = React.forwardRef(({ tags, onSave, allTags, updateTags }: TagBarProps, ref) => {
+const TagBar = React.forwardRef(({ tags, onSave, allTags, updateTags, padding = 0 }: TagBarProps, ref) => {
   const api = useAPI();
 
   const onChange = useCallback(
@@ -85,6 +86,7 @@ const TagBar = React.forwardRef(({ tags, onSave, allTags, updateTags }: TagBarPr
       values={values}
       onChange={onChange}
       tagProps={(value: string) => getTagProps(value)}
+      padding={padding}
     />
   );
 

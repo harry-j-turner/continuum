@@ -9,7 +9,7 @@ interface ThoughtEditorProps {
   thought: Thought;
   onUpdate: (thought: Thought) => void;
   onDelete: (thought: Thought) => void;
-  updateTags: (tags: Tag[]) => void;
+  onUpdateTags: (tags: Tag[]) => void;
   allTags: Tag[];
   isDisabled: boolean;
 }
@@ -18,7 +18,7 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
   thought,
   onUpdate,
   onDelete,
-  updateTags,
+  onUpdateTags,
   allTags,
   isDisabled
 }) => {
@@ -52,7 +52,7 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
       borderRadius={4}
     >
       <Pane display="flex" justifyContent="space-between" marginBottom={16}>
-        <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={updateTags} allTags={allTags} />
+        <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={onUpdateTags} allTags={allTags} />
         {window.innerWidth > 800 && (
           <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon} disabled={isDisabled}>
             Delete

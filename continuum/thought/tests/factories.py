@@ -1,6 +1,6 @@
 # factories.py
 import factory
-from thought.models import Entry, Thought, Tag
+from thought.models import Thought, Tag
 
 
 class TagFactory(factory.django.DjangoModelFactory):
@@ -12,12 +12,6 @@ class TagFactory(factory.django.DjangoModelFactory):
     colour = factory.Faker("hex_color")
 
 
-class EntryFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Entry
-
-    date = factory.Faker("date_object")
-
 
 class ThoughtFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -25,7 +19,6 @@ class ThoughtFactory(factory.django.DjangoModelFactory):
         skip_postgeneration_save = True
 
     content = factory.Faker("sentence")
-    entry = factory.SubFactory(EntryFactory)
     mood = None
 
     @factory.post_generation

@@ -127,7 +127,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 
 resource "aws_key_pair" "continuum_key" {
   key_name   = "continuum_key"
-  public_key = file("/home/harry/.ssh/api.continuum-journal.com.pub")
+  public_key = file("/home/harry_turner/.ssh/api.continuum-journal.com.pub")
 }
 
 resource "aws_instance" "server" {

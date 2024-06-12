@@ -1,13 +1,13 @@
 import React from 'react';
-import { Pane, Strong, Icon, IconComponent, Popover, Menu, Position } from 'evergreen-ui';
+import { Pane, Strong, Icon, IconComponent, Popover, Menu, Position, HomeIcon, MenuIcon } from 'evergreen-ui';
 import theme from '../../theme';
+import { useResponsive } from '../../hooks/useResponsive';
 
 export type HeaderLink = {
   name: string;
   icon: IconComponent;
   disabled?: boolean;
   onClick: () => unknown;
-  subHeadings?: HeaderLink[];
 };
 
 interface HeaderProps {
@@ -16,8 +16,50 @@ interface HeaderProps {
 
 export function Header({ links }: HeaderProps) {
   const _links: React.ReactNode[] = [];
-  links.forEach((link) => {
-    if (!link.subHeadings) {
+  const {isMobile} = useResponsive();
+
+  if (isMobile) {
+    _links.push(
+      <Popover
+        position={Position.BOTTOM_RIGHT}
+        content={({ close }) => (
+          <Menu>
+            <Menu.Group>
+              {links.map((link) => (
+                <Menu.Item
+                  userSelect="none"
+                  key={link.name}
+                  icon={link.icon}
+                  onSelect={() => {
+                    link.onClick();
+                    close();
+                  }}
+                  disabled={link.disabled}
+                  cursor={link.disabled ? null : 'pointer'}
+                >
+                  {link.name}
+                </Menu.Item>
+              ))}
+            </Menu.Group>
+          </Menu>
+        )}
+      >
+        <Pane
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          marginLeft={32}
+          cursor="pointer"
+          userSelect="none"
+        >
+          <Icon icon={MenuIcon} color={theme.colors.background} size={16} marginRight={8} />
+        </Pane>
+      </Popover>
+    );
+  }
+
+  if (!isMobile) {
+    links.forEach((link) => {
       _links.push(
         <Pane
           display="flex"
@@ -34,52 +76,9 @@ export function Header({ links }: HeaderProps) {
           <Icon icon={link.icon} color={theme.colors.background} size={16} marginRight={8} />
           <Strong color={theme.colors.background}>{link.name}</Strong>
         </Pane>
-      );
-    } else {
-      _links.push(
-        <Popover
-          position={Position.BOTTOM_RIGHT}
-          content={({ close }) => (
-            <Menu>
-              <Menu.Group>
-                {link.subHeadings?.map((subHeading) => (
-                  <Menu.Item
-                    userSelect="none"
-                    key={subHeading.name}
-                    icon={subHeading.icon}
-                    onSelect={() => {
-                      subHeading.onClick();
-                      close();
-                    }}
-                    disabled={subHeading.disabled}
-                    cursor={subHeading.disabled ? null : 'pointer'}
-                  >
-                    {subHeading.name}
-                  </Menu.Item>
-                ))}
-              </Menu.Group>
-            </Menu>
-          )}
-        >
-          <Pane
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            marginLeft={32}
-            key={link.name}
-            cursor="pointer"
-            userSelect="none"
-            pointerEvents={link.disabled ? 'none' : 'auto'}
-            opacity={link.disabled ? 0.5 : 1}
-            onClick={link.disabled ? () => null : link.onClick}
-          >
-            <Icon icon={link.icon} color={theme.colors.background} size={16} marginRight={8} />
-            <Strong color={theme.colors.background}>{link.name}</Strong>
-          </Pane>
-        </Popover>
-      );
-    }
-  });
+      );       
+    });
+  }
 
   return (
     <Pane

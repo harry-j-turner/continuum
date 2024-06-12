@@ -1,6 +1,7 @@
-import { Thought, Tag, Entry, Task } from '../types';
+import { useEffect, useState } from 'react';
+import { Thought, Tag } from '../types';
 import { useSelector } from 'react-redux';
-import { selectToken } from '../state/profile';
+import { useAuth0 } from '@auth0/auth0-react';
 
 // Set based on domain. For local development, use 'http://localhost:8000/api'
 const API_BASE_URL =
@@ -8,7 +9,7 @@ const API_BASE_URL =
     ? 'http://localhost:8000/api'
     : 'https://api.continuum-journal.com/api';
 
-type Entity = Thought | Tag | Entry;
+type Entity = Thought | Tag;
 
 type DjangoPaginatedResponse = {
   count: number;
@@ -21,13 +22,23 @@ type DjangoRetrieveResponse = Entity;
 type DjangoCreateResponse = Entity;
 type DjangoUpdateResponse = Entity;
 
+let token = '';
+
 const useAPI = () => {
-  const token = useSelector(selectToken);
+  const { getAccessTokenSilently } = useAuth0();
+
+  const getToken = async () => {
+    const storedToken = localStorage.getItem('access_token');
+    if (storedToken) return storedToken;
+
+    const newToken = await getAccessTokenSilently();
+    localStorage.setItem('access_token', newToken);
+    return newToken;
+  };
 
   const callAPI = async (path: string, body?: unknown, method = 'GET'): Promise<Response | null> => {
     if (!token) {
-      console.error('No token found');
-      return null;
+      token = await getToken();
     }
 
     const url = `${API_BASE_URL}/${path}`;
@@ -58,105 +69,66 @@ const useAPI = () => {
     return response;
   };
 
-  // Entries API
+  // Thoughts API
   // ###########
 
-  interface CreateEntry {
-    entry: Omit<Entry, 'id'>;
+  interface CreateThought {
+    thought: Omit<Thought, 'id'>;
   }
 
-  const createEntry = async ({ entry }: CreateEntry): Promise<Entry | null> => {
-    const response = await callAPI('entries/', entry, 'POST');
+  const createThought = async ({ thought }: CreateThought): Promise<Thought | null> => {
+    const response = await callAPI('thoughts/', thought, 'POST');
     if (!response) return null;
     const data: DjangoCreateResponse = await response.json();
-    return data as Entry;
+    return data as Thought;
   };
 
-  interface RetrieveEntry {
+  interface RetrieveThought {
     id: string;
   }
 
-  const retrieveEntry = async ({ id }: RetrieveEntry): Promise<Entry | null> => {
-    const response = await callAPI(`entries/${id}/`);
+  const retrieveThought = async ({ id }: RetrieveThought): Promise<Thought | null> => {
+    const response = await callAPI(`thoughts/${id}/`);
     if (!response) return null;
     const data: DjangoRetrieveResponse = await response.json();
-    return data as Entry;
+    return data as Thought;
   };
 
-  interface ListEntries {
-    searchTerm?: string;
+  interface ListThoughts {
     startDate?: string;
     endDate?: string;
+    tags?: string[];
   }
 
-  const listEntries = async ({ searchTerm, startDate, endDate }: ListEntries): Promise<Entry[] | null> => {
+  const listThoughts = async ({ startDate, endDate, tags }: ListThoughts): Promise<Thought[] | null> => {
     const params = new URLSearchParams();
-    if (searchTerm) params.append('search', searchTerm);
     if (startDate) params.append('start_date', startDate);
     if (endDate) params.append('end_date', endDate);
+    if (tags) tags.forEach((tag) => params.append('tags', tag));
 
-    const response = await callAPI(`entries/?${params.toString()}`);
+    const response = await callAPI(`thoughts/?${params.toString()}`);
     if (!response) return null;
     const data: DjangoPaginatedResponse = await response.json();
-    return data.results as Entry[];
-  };
-
-  interface UpdateEntry {
-    entry: Entry;
-  }
-
-  const updateEntry = async ({ entry }: UpdateEntry): Promise<Entry | null> => {
-    const response = await callAPI(`entries/${entry.id}/`, entry, 'PATCH');
-    if (!response) return null;
-    const data: DjangoUpdateResponse = await response.json();
-    return data as Entry;
-  };
-
-  interface DeleteEntry {
-    id: string;
-  }
-
-  const deleteEntry = async ({ id }: DeleteEntry): Promise<void | null> => {
-    const response = await callAPI(`entries/${id}/`, {}, 'DELETE');
-    if (!response) return null;
-    return;
-  };
-
-  // Thought API
-  // ########
-
-  interface CreateThought {
-    entryId: string;
-    item: Omit<Thought, 'id' | 'entry' | 'mood' | 'actions'>;
-  }
-
-  const createThought = async ({ entryId, item }: CreateThought): Promise<Thought | null> => {
-    const response = await callAPI(`entries/${entryId}/add-thought/`, item, 'POST');
-    if (!response) return null;
-    const data: Thought = await response.json();
-    return data;
+    return data.results as Thought[];
   };
 
   interface UpdateThought {
-    entryId: string;
-    thoughtId: string;
-    item: Partial<Thought>;
+    thought: Thought;
   }
 
-  const updateThought = async ({ entryId, thoughtId, item }: UpdateThought): Promise<Thought | null> => {
-    const response = await callAPI(`entries/${entryId}/edit-thought/${thoughtId}/`, item, 'PUT');
+  const updateThought = async ({ thought }: UpdateThought): Promise<Thought | null> => {
+    const response = await callAPI(`thoughts/${thought.id}/`, thought, 'PATCH');
     if (!response) return null;
-    const data: Thought = await response.json();
-    return data;
+    const data: DjangoUpdateResponse = await response.json();
+    return data as Thought;
   };
 
   interface DeleteThought {
-    entryId: string;
-    thoughtId: string;
+    id: string;
   }
 
-  const deleteThought = async ({ entryId, thoughtId }: DeleteThought): Promise<void | null> => {
-    const response = await callAPI(`entries/${entryId}/delete-thought/${thoughtId}/`, {}, 'DELETE');
+  const deleteThought = async ({ id }: DeleteThought): Promise<void | null> => {
+    const response = await callAPI(`thoughts/${id}/`, {}, 'DELETE');
     if (!response) return null;
     return;
   };
@@ -192,45 +164,6 @@ const useAPI = () => {
     return;
   };
 
-  // Tasks API
-  // #########
-
-  interface UpdateTask {
-    taskID: string;
-    task: Partial<Task>;
-  }
-
-  interface CreateTask {
-    task: Omit<Task, 'id'>;
-  }
-
-  const createTask = async ({ task }: CreateTask): Promise<Task | null> => {
-    const response = await callAPI('tasks/', task, 'POST');
-    if (!response) return null;
-    const data: Task = await response.json();
-    return data;
-  };
-
-  const listTasks = async (): Promise<Task[] | null> => {
-    const response = await callAPI('tasks/');
-    if (!response) return null;
-    const data: Task[] = await response.json();
-    return data as Task[];
-  };
-
-  const updateTask = async ({ taskID, task }: UpdateTask): Promise<Task | null> => {
-    const response = await callAPI(`tasks/${taskID}/`, task, 'PATCH');
-    if (!response) return null;
-    const data: Task = await response.json();
-    return data;
-  };
-
-  const deleteTask = async ({ id }: DeleteTag): Promise<void | null> => {
-    const response = await callAPI(`tasks/${id}/`, {}, 'DELETE');
-    if (!response) return null;
-    return;
-  };
-
   // Report API
   // ##########
 
@@ -241,22 +174,15 @@ const useAPI = () => {
   };
 
   return {
-    createEntry,
-    updateEntry,
-    retrieveEntry,
-    deleteEntry,
-    listEntries,
     createThought,
     updateThought,
+    retrieveThought,
     deleteThought,
+    listThoughts,
     createTag,
     listTags,
     deleteTag,
-    generateReport,
-    listTasks,
-    updateTask,
-    createTask,
-    deleteTask
+    generateReport
   };
 };
 

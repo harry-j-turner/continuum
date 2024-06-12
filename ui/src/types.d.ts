@@ -4,13 +4,7 @@ export type Thought = {
   entry: string;
   tags: string[];
   mood: number;
-  actions: string;
-};
-
-export type Entry = {
-  id: string;
-  date: string;
-  thoughts: Thought[];
+  create_at: string;
 };
 
 export type Tag = {
@@ -18,17 +12,4 @@ export type Tag = {
   name: string;
   description: string;
   colour: string;
-};
-
-export type Task = {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  name: string;
-  notes: string;
-  tags: string[];
-  snooze: string | null;
-  is_evergreen: boolean;
-  is_completed: boolean;
-  is_ideal: boolean;
 };

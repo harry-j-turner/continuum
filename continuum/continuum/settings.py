@@ -20,7 +20,7 @@ from openai import OpenAI
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = getenv("SECRET_KEY")
-DEBUG = getenv("DEBUG", 0) == 1
+DEBUG = getenv("DEBUG", '0') == '1'
 ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS").split(" ")
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = ["Quanda-Project", "Content-Type", "Authorization", "Content-Disposition"]
@@ -180,6 +180,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -1,12 +1,14 @@
 import pytest
+from datetime import datetime, timedelta
+from dateutil.parser import parse as parse_date
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from guardian.shortcuts import assign_perm
-from thought.tests.factories import EntryFactory, ThoughtFactory
+from thought.tests.factories import ThoughtFactory, TagFactory
 
-from thought.models import Entry, Thought
+from thought.models import Thought
 
 
 @pytest.fixture
@@ -29,58 +31,213 @@ def authenticated_client(api_client, user):
 
 
 @pytest.mark.django_db
-def test_create_entry(authenticated_client, user):
-    """User can create a new Entry."""
+def test_create_thought(authenticated_client, user):
+    """User can create a new Thought."""
 
-    url = reverse("entry-list")
+    url = reverse("thought-list")
 
-    # Given - An entry data
-    entry_data = {"date": "2023-10-01"}
+    # Given - An thought data
+    thought_data = {"content": "This is a thought"}
 
-    # When - The user creates a new entry
-    response = authenticated_client.post(url, entry_data)
+    # When - The user creates a new thought
+    response = authenticated_client.post(url, thought_data)
+
+    print(response.json())
 
     # Then - The response is successful
     assert response.status_code == status.HTTP_201_CREATED
 
-    # And - The entry is created in the database with correct permissions
-    assert Entry.objects.filter(date="2023-10-01").exists()
-    new_entry = Entry.objects.get(date="2023-10-01")
-    assert user.has_perm("view_entry", new_entry)
+    # And - The thought is created in the database with correct permissions
+    assert Thought.objects.filter(content="This is a thought").exists()
+    new_thought = Thought.objects.get(content="This is a thought")
+    assert user.has_perm("view_thought", new_thought)
 
 
 @pytest.mark.django_db
-def test_view_entry_with_thoughts(authenticated_client, user):
-    """User can view an entry with associated thoughts."""
+def test_list_thoughts_with_permissions(authenticated_client, user):
+    """User can list only thoughts they have permission to view."""
 
-    # Given - An entry with associated thoughts
-    entry = EntryFactory(date="2023-10-02")
-    ThoughtFactory(entry=entry, content="Thought 1")
-    ThoughtFactory(entry=entry, content="Thought 2")
-    assign_perm("view_entry", user, entry)
+    # Given - Two thoughts with view permissions assigned to the user
+    thought1 = ThoughtFactory()
+    thought2 = ThoughtFactory()
+    assign_perm("view_thought", user, thought1)
+    assign_perm("view_thought", user, thought2)
 
-    url = reverse("entry-detail", kwargs={"pk": entry.id})
+    url = reverse("thought-list")
 
-    # When - The user retrieves the entry
+    # When - The user retrieves the list of thoughts
     response = authenticated_client.get(url)
 
-    # Then - The response is successful and includes the associated thoughts
+    # Then - The response is successful and includes the thoughts
     assert response.status_code == status.HTTP_200_OK
-    assert response.data["date"] == "2023-10-02"
-    thoughts = {thought["content"] for thought in response.data["thoughts"]}
-    assert thoughts == {"Thought 1", "Thought 2"}
+    results = response.json()["results"]
+    assert len(results) == 2
 
 
 @pytest.mark.django_db
-def test_view_entry_no_permission(authenticated_client, user):
+def test_thoughts_are_listed_in_creation_order(authenticated_client, user):
+    """Thoughts are listed in creation order."""
+
+    # Given - Two thoughts with view permissions assigned to the user
+    thought1 = ThoughtFactory()
+    thought2 = ThoughtFactory()
+    thought3 = ThoughtFactory()
+    assign_perm("view_thought", user, thought1)
+    assign_perm("view_thought", user, thought2)
+    assign_perm("view_thought", user, thought3)
+
+    thought1.created_at = datetime.now() - timedelta(days=1)
+    thought2.created_at = datetime.now() - timedelta(days=2)
+    thought3.created_at = datetime.now() - timedelta(days=3)
+
+    thought1.save()
+    thought2.save()
+    thought3.save()
+
+    url = reverse("thought-list")
+
+    # When - The user retrieves the list of thoughts
+    response = authenticated_client.get(url)
+
+    # Then - The response is successful and includes the thoughts
+    assert response.status_code == status.HTTP_200_OK
+    results = response.json()["results"]
+    assert len(results) == 3
+    assert results[0]["id"] == str(thought1.id)
+    assert results[1]["id"] == str(thought2.id)
+    assert results[2]["id"] == str(thought3.id)
+
+
+@pytest.mark.django_db
+def test_max_ten_thoughts_are_listed(authenticated_client, user):
+    """No more than ten thoughts are listed."""
+
+    # Given - Eleven thoughts with view permissions assigned to the user
+    for i in range(11):
+        thought = ThoughtFactory()
+        assign_perm("view_thought", user, thought)
+
+    url = reverse("thought-list")
+
+    # When - The user retrieves the list of thoughts
+    response = authenticated_client.get(url)
+
+    # Then - The response is successful and includes the thoughts
+    assert response.status_code == status.HTTP_200_OK
+    results = response.json()["results"]
+    assert len(results) == 10
+
+
+@pytest.mark.django_db
+def test_filter_thoughts_by_start_date(authenticated_client, user):
+    """Setting start_date return only thoughts created after that date."""
+
+    # Given - Two thoughts with view permissions assigned to the user
+    thought1 = ThoughtFactory()
+    thought2 = ThoughtFactory()
+    assign_perm("view_thought", user, thought1)
+    assign_perm("view_thought", user, thought2)
+
+    thought1.created_at = parse_date("2021-01-01")
+    thought2.created_at = parse_date("2021-01-05")
+
+    thought1.save()
+    thought2.save()
+
+    url = reverse("thought-list")
+
+    # When - The user retrieves the list of thoughts with a start_date filter
+    response = authenticated_client.get(url, {"start_date": "2021-01-03"})
+
+    # Then - The response is successful and includes the thoughts
+    assert response.status_code == status.HTTP_200_OK
+    results = response.json()["results"]
+    assert len(results) == 1
+    assert results[0]["id"] == str(thought2.id)
+
+
+@pytest.mark.django_db
+def test_filter_thoughts_by_end_date(authenticated_client, user):
+    """Setting end_date return only thoughts created before that date."""
+
+    # Given - Two thoughts with view permissions assigned to the user
+    thought1 = ThoughtFactory()
+    thought2 = ThoughtFactory()
+    assign_perm("view_thought", user, thought1)
+    assign_perm("view_thought", user, thought2)
+
+    thought1.created_at = parse_date("2021-01-01")
+    thought2.created_at = parse_date("2021-01-05")
+
+    thought1.save()
+    thought2.save()
+
+    url = reverse("thought-list")
+
+    # When - The user retrieves the list of thoughts with a end_date filter
+    response = authenticated_client.get(url, {"end_date": "2021-01-03"})
+
+    # Then - The response is successful and includes the thoughts
+    assert response.status_code == status.HTTP_200_OK
+    results = response.json()["results"]
+    assert len(results) == 1
+    assert results[0]["id"] == str(thought1.id)
+
+
+@pytest.mark.django_db
+def test_filter_thoughts_by_tags(authenticated_client, user):
+    """Setting tags return only thoughts with those tags."""
+
+    # Given - Two thoughts with view permissions assigned to the user
+    thought1 = ThoughtFactory()
+    thought2 = ThoughtFactory()
+    assign_perm("view_thought", user, thought1)
+    assign_perm("view_thought", user, thought2)
+
+    tag1 = TagFactory(name="tag1")
+    tag2 = TagFactory(name="tag2")
+
+    thought1.tags.add(tag1)
+    thought2.tags.add(tag2)
+
+    url = reverse("thought-list")
+
+    # When - The user retrieves the list of thoughts with a tags filter
+    response = authenticated_client.get(url, {"tags": [tag1.id]})
+
+    # Then - The response is successful and includes the thoughts
+    assert response.status_code == status.HTTP_200_OK
+    results = response.json()["results"]
+    assert len(results) == 1
+    assert results[0]["id"] == str(thought1.id)
+
+
+@pytest.mark.django_db
+def test_view_thought(authenticated_client, user):
+    """User with permission can view an existing Thought."""
+
+    # Given - An existing Thought with view permission
+    thought = ThoughtFactory(content="This is a thought")
+    assign_perm("view_thought", user, thought)
+
+    url = reverse("thought-detail", kwargs={"pk": thought.id})
+
+    # When - The user retrieves the Thought
+    response = authenticated_client.get(url)
+
+    # Then - The response is successful and includes the Thought
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["content"] == "This is a thought"
+
+
+@pytest.mark.django_db
+def test_view_thought_no_permission(authenticated_client, user):
     """User cannot view an entry without permission."""
 
     # Given - An entry without view permission
-    entry = EntryFactory(date="2023-10-03")
-    ThoughtFactory(entry=entry, content="Thought 1")
-    ThoughtFactory(entry=entry, content="Thought 2")
+    thought = ThoughtFactory(content="This is a thought")
 
-    url = reverse("entry-detail", kwargs={"pk": entry.id})
+    url = reverse("thought-detail", kwargs={"pk": thought.id})
 
     # When - The user retrieves the entry
     response = authenticated_client.get(url)
@@ -90,59 +247,14 @@ def test_view_entry_no_permission(authenticated_client, user):
 
 
 @pytest.mark.django_db
-def test_add_thought_to_entry(authenticated_client, user):
-    """User can add a new Thought to an Entry they have permissions for."""
-
-    # Given - An Entry with view and add permissions
-    entry = EntryFactory()
-    assign_perm("view_entry", user, entry)
-
-    url = reverse("entry-add-thought", kwargs={"pk": entry.id})
-
-    # Given - Thought data
-    thought_data = {"content": "New insightful thought"}
-
-    # When - The user posts a new Thought to the Entry
-    response = authenticated_client.post(url, thought_data)
-
-    print(response.json())
-
-    # Then - The response is successful and Thought is added
-    assert response.status_code == status.HTTP_201_CREATED
-    assert Thought.objects.filter(content="New insightful thought", entry=entry).exists()
-
-
-@pytest.mark.django_db
-def test_add_thought_to_entry_without_permission(authenticated_client, user):
-    """User cannot add a new Thought to an Entry they do not have permissions for."""
-
-    # Given - An Entry without add permissions
-    entry = EntryFactory()
-
-    url = reverse("entry-add-thought", kwargs={"pk": entry.id})
-
-    # Given - Thought data
-    thought_data = {"content": "Unauthorized thought"}
-
-    # When - The user tries to post a Thought to the Entry
-    response = authenticated_client.post(url, thought_data)
-
-    # Then - The response should be forbidden
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert not Thought.objects.filter(content="Unauthorized thought", entry=entry).exists()
-
-
-@pytest.mark.django_db
-def test_edit_thought_with_permission(authenticated_client, user):
-    """User can edit an existing Thought when they have the appropriate permissions."""
+def test_edit_thought(authenticated_client, user):
+    """User can edit an existing Thought."""
 
     # Given - An existing Thought with edit permissions
-    entry = EntryFactory()
-    thought = ThoughtFactory(entry=entry, content="Original thought")
-    assign_perm("view_entry", user, entry)
+    thought = ThoughtFactory(content="Original thought")
     assign_perm("change_thought", user, thought)
 
-    url = reverse("entry-edit-thought", kwargs={"pk": entry.id, "thought_id": thought.id})
+    url = reverse("thought-detail", kwargs={"pk": thought.id})
 
     # Given - Updated Thought data
     updated_thought_data = {"content": "Updated thought"}
@@ -157,14 +269,13 @@ def test_edit_thought_with_permission(authenticated_client, user):
 
 
 @pytest.mark.django_db
-def test_edit_thought_without_permission(authenticated_client, user):
+def test_edit_thought_no_permission(authenticated_client, user):
     """User cannot edit an existing Thought without the appropriate permissions."""
 
     # Given - An existing Thought without edit permissions
-    entry = EntryFactory()
-    thought = ThoughtFactory(entry=entry, content="Original thought")
+    thought = ThoughtFactory(content="Original thought")
 
-    url = reverse("entry-edit-thought", kwargs={"pk": entry.id, "thought_id": thought.id})
+    url = reverse("thought-detail", kwargs={"pk": thought.id})
 
     # Given - Updated Thought data
     updated_thought_data = {"content": "Updated thought"}
@@ -179,16 +290,14 @@ def test_edit_thought_without_permission(authenticated_client, user):
 
 
 @pytest.mark.django_db
-def test_delete_thought_with_permission(authenticated_client, user):
-    """User can delete an existing Thought when they have the appropriate permissions."""
+def test_delete_thought(authenticated_client, user):
+    """User can delete an existing Thought."""
 
     # Given - An existing Thought with delete permissions
-    entry = EntryFactory()
-    thought = ThoughtFactory(entry=entry, content="Deletable thought")
-    assign_perm("view_entry", user, entry)
+    thought = ThoughtFactory(content="Deletable thought")
     assign_perm("delete_thought", user, thought)
 
-    url = reverse("entry-delete-thought", kwargs={"pk": entry.id, "thought_id": thought.id})
+    url = reverse("thought-detail", kwargs={"pk": thought.id})
 
     # When - The user deletes the Thought
     response = authenticated_client.delete(url)
@@ -199,14 +308,13 @@ def test_delete_thought_with_permission(authenticated_client, user):
 
 
 @pytest.mark.django_db
-def test_delete_thought_without_permission(authenticated_client, user):
+def test_delete_thought_no_permission(authenticated_client, user):
     """User cannot delete an existing Thought without the appropriate permissions."""
 
     # Given - An existing Thought without delete permissions
-    entry = EntryFactory()
-    thought = ThoughtFactory(entry=entry, content="Non-deletable thought")
+    thought = ThoughtFactory(content="Non-deletable thought")
 
-    url = reverse("entry-delete-thought", kwargs={"pk": entry.id, "thought_id": thought.id})
+    url = reverse("thought-detail", kwargs={"pk": thought.id})
 
     # When - The user tries to delete the Thought
     response = authenticated_client.delete(url)

@@ -11,7 +11,7 @@ from django.db import models
 from thought import tasks
 from guardian.shortcuts import assign_perm
 
-from thought.models import Entry, Tag, Thought
+from thought.models import Tag, Thought
 
 
 class User(AbstractUser):
@@ -40,16 +40,16 @@ class User(AbstractUser):
         )
         assign_perm("view_tag", self, onboarding_tag)
 
-        # Onboarding content.
-        for day, entry_content in enumerate(ONBOARDING_CONTENT):
-            entry = Entry.objects.create(date=datetime.now().date() - timedelta(days=day))
+        # # Onboarding content.
+        # for day, entry_content in enumerate(ONBOARDING_CONTENT):
+        #     entry = Entry.objects.create(date=datetime.now().date() - timedelta(days=day))
 
-            for content in entry_content:
-                thought = Thought.objects.create(content=content, entry=entry)
-                thought.tags.add(onboarding_tag)
-                tasks.extract_mood.delay(thought.id)
-                tasks.extract_actions.delay(thought.id)
-                thought.save()
+        #     for content in entry_content:
+        #         thought = Thought.objects.create(content=content, entry=entry)
+        #         thought.tags.add(onboarding_tag)
+        #         tasks.extract_mood.delay(thought.id)
+        #         tasks.extract_actions.delay(thought.id)
+        #         thought.save()
 
-            entry.save()
-            assign_perm("view_entry", self, entry)
+        #     entry.save()
+        #     assign_perm("view_entry", self, entry)
