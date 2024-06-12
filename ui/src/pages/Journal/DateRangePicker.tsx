@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Pane, Popover, Position, Text } from 'evergreen-ui';
 import { DatePicker3 } from '@blueprintjs/datetime2';

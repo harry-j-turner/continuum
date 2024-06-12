@@ -1,14 +1,14 @@
 import './App.css';
 import React from 'react';
 import theme from './theme';
-import { BookIcon, Button, CodeIcon, LogOutIcon, ThemeProvider } from 'evergreen-ui';
+import { Button, CodeIcon, LogOutIcon, ThemeProvider } from 'evergreen-ui';
 
 import { Pane } from 'evergreen-ui';
 
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 
 import { Header } from './components/Header';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 // Fragments
 import { version } from './version';

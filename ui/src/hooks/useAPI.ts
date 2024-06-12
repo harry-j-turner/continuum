@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
 import { Thought, Tag } from '../types';
-import { useSelector } from 'react-redux';
 import { useAuth0 } from '@auth0/auth0-react';
 
 // Set based on domain. For local development, use 'http://localhost:8000/api'

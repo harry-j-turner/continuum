@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pane, Strong, Icon, IconComponent, Popover, Menu, Position, HomeIcon, MenuIcon } from 'evergreen-ui';
+import { Pane, Strong, Icon, IconComponent, Popover, Menu, Position, MenuIcon } from 'evergreen-ui';
 import theme from '../../theme';
 import { useResponsive } from '../../hooks/useResponsive';
 
@@ -16,7 +16,7 @@ interface HeaderProps {
 
 export function Header({ links }: HeaderProps) {
   const _links: React.ReactNode[] = [];
-  const {isMobile} = useResponsive();
+  const { isMobile } = useResponsive();
 
   if (isMobile) {
     _links.push(
@@ -44,14 +44,7 @@ export function Header({ links }: HeaderProps) {
           </Menu>
         )}
       >
-        <Pane
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          marginLeft={32}
-          cursor="pointer"
-          userSelect="none"
-        >
+        <Pane display="flex" flexDirection="row" alignItems="center" marginLeft={32} cursor="pointer" userSelect="none">
           <Icon icon={MenuIcon} color={theme.colors.background} size={16} marginRight={8} />
         </Pane>
       </Popover>
@@ -76,7 +69,7 @@ export function Header({ links }: HeaderProps) {
           <Icon icon={link.icon} color={theme.colors.background} size={16} marginRight={8} />
           <Strong color={theme.colors.background}>{link.name}</Strong>
         </Pane>
-      );       
+      );
     });
   }
 
