@@ -9,9 +9,11 @@ import ThoughtEditor from '../../components/ThoughtEditor';
 import DateRangePicker from './DateRangePicker';
 import TagBar from '../../components/TagBar';
 import theme from '../../theme';
+import { useResponsive } from '../../hooks/useResponsive';
 
 function Journal() {
   const api = useAPI();
+  const { isMobile } = useResponsive();
   const [thoughts, setThoughts] = useState<Thought[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
 
@@ -101,18 +103,18 @@ function Journal() {
   return (
     <Background>
       <Pane display="flex" flexDirection="column" maxHeight="calc(100vh - 48px)" padding={16}>
-        <Pane paddingBottom={16} display="flex" flexDirection="row" justifyContent="space-between">
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            handleStartDateChange={handleStartDateChange}
-            handleEndDateChange={handleEndDateChange}
-          />
+        <Pane
+          paddingBottom={16}
+          display="flex"
+          flexDirection={isMobile ? 'column' : 'row'}
+          justifyContent="space-between"
+        >
           {/* TODO: Replace this with actual button. */}
           <Pane
-            backgroundColor={theme.colors.primary}
-            marginLeft={16}
             padding={12}
+            backgroundColor={theme.colors.primary}
+            marginBottom={isMobile ? 16 : 0}
+            width={isMobile ? 'fit-content' : 'auto'}
             borderRadius={4}
             cursor="pointer"
             display="flex"
@@ -127,10 +129,16 @@ function Journal() {
             }}
           >
             <PlusIcon size={16} marginRight={16} color="white" />
-            <Text fontSize="1rem" color="white" fontWeight={500}>
+            <Text fontSize="1rem" color="white" fontWeight={500} paddingRight={isMobile ? 16 : 0}>
               New Thought
             </Text>
           </Pane>
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+          />
         </Pane>
 
         <TagBar tags={filterTags} allTags={tags} onSave={setFilterTags} updateTags={setTags} padding={4} />
