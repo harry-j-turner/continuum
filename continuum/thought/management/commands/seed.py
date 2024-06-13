@@ -3,7 +3,7 @@ from thought.models import Tag, Thought
 from user.models import User
 from datetime import datetime
 from datetime import timedelta
-from random import SystemRandom
+from random import randint, choice
 from guardian.shortcuts import assign_perm
 
 TAGS = [
@@ -16,10 +16,10 @@ THOUGHTS = {}
 for i in range(1, 30):
     THOUGHTS[f"thought_{i}"] = {
         "content": f"Thought {i}",
-        "mood": SystemRandom.randint(1, 5),
+        "mood": randint(1, 5),
         "actions": "",
         "created_at": datetime.now() - timedelta(days=i),
-        "tags": [SystemRandom.choice(TAGS) for _ in range(SystemRandom.randint(1, 2))],
+        "tags": [choice(TAGS) for _ in range(randint(1, 2))],
     }
 
 

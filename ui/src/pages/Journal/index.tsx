@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Text, Pane, PlusIcon } from 'evergreen-ui';
+import { Text, Pane, PlusIcon, RepeatIcon, FilterRemoveIcon } from 'evergreen-ui';
 
 import Background from '../../components/Background';
 import { Tag, Thought } from '../../types';
@@ -31,6 +31,24 @@ function Journal() {
     if (selectedDate) {
       setEndDate(selectedDate);
     }
+  };
+
+  const cycle = () => {
+    if (tags.length === 0) {
+      return;
+    }
+
+    if (filterTags.length === 0) {
+      setFilterTags([tags[0].id]);
+    } else {
+      const currentTagIndex = tags.findIndex((tag) => tag.id === filterTags[0]);
+      const nextTagIndex = (currentTagIndex + 1) % tags.length;
+      setFilterTags([tags[nextTagIndex].id]);
+    }
+  };
+
+  const clearFilter = () => {
+    setFilterTags([]);
   };
 
   useEffect(() => {
@@ -141,7 +159,55 @@ function Journal() {
           />
         </Pane>
 
-        <TagBar tags={filterTags} allTags={tags} onSave={setFilterTags} updateTags={setTags} padding={4} />
+        <Pane
+          display="flex"
+          flexDirection={isMobile ? 'column' : 'row'}
+          justifyContent="flex-end"
+          alignItems={isMobile ? 'flex-start' : 'center'}
+        >
+          <TagBar tags={filterTags} allTags={tags} onSave={setFilterTags} updateTags={setTags} padding={4} />
+          <Pane
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            marginTop={isMobile ? 8 : 0}
+            marginLeft={isMobile ? 0 : 8}
+          >
+            <Pane
+              padding={12}
+              backgroundColor="rgba(255, 255, 255, 0.7)"
+              width={isMobile ? 'fit-content' : 'auto'}
+              borderRadius={4}
+              cursor="pointer"
+              display="flex"
+              flexDirection="row"
+              alignItems="c>enter"
+              onClick={clearFilter}
+            >
+              <FilterRemoveIcon size={16} marginRight={16} color={theme.colors.primary} />
+              <Text fontSize="1rem" fontWeight={500} paddingRight={isMobile ? 16 : 0}>
+                Clear Tags
+              </Text>
+            </Pane>
+            <Pane
+              padding={12}
+              marginLeft={8}
+              backgroundColor="rgba(255, 255, 255, 0.7)"
+              width={isMobile ? 'fit-content' : 'auto'}
+              borderRadius={4}
+              cursor="pointer"
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              onClick={cycle}
+            >
+              <RepeatIcon size={16} marginRight={16} color={theme.colors.primary} />
+              <Text fontSize="1rem" fontWeight={500} paddingRight={isMobile ? 16 : 0}>
+                Cycle
+              </Text>
+            </Pane>
+          </Pane>
+        </Pane>
 
         <Pane flex="1" className="browseBodyNoScrollbar" paddingTop={16}>
           {thoughts.map((thought) => (

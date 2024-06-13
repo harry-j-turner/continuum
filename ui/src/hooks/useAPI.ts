@@ -56,6 +56,13 @@ const useAPI = () => {
     });
 
     if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        // Clear token and try again
+        localStorage.removeItem('access_token');
+        token = await getToken();
+        return callAPI(path, body, method);
+      }
+
       try {
         const data = await response.json();
         console.error(data);
