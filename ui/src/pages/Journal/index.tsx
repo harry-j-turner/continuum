@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Pane } from 'evergreen-ui';
+import { Text, Pane, PlusIcon } from 'evergreen-ui';
 
 import Background from '../../components/Background';
 import { Tag, Thought } from '../../types';
@@ -8,6 +8,7 @@ import { useAPI } from '../../hooks';
 import ThoughtEditor from '../../components/ThoughtEditor';
 import DateRangePicker from './DateRangePicker';
 import TagBar from '../../components/TagBar';
+import theme from '../../theme';
 
 function Journal() {
   const api = useAPI();
@@ -85,6 +86,14 @@ function Journal() {
     });
   };
 
+  const onCreateThought = (thought: Omit<Thought, 'id'>) => {
+    api.createThought({ thought }).then((createdThought) => {
+      if (createdThought) {
+        setThoughts((prev) => [createdThought, ...prev]);
+      }
+    });
+  };
+
   const onUpdateTags = (tags: Tag[]) => {
     setTags(tags);
   };
@@ -92,13 +101,38 @@ function Journal() {
   return (
     <Background>
       <Pane display="flex" flexDirection="column" maxHeight="calc(100vh - 48px)" padding={16}>
-        <DateRangePicker
-          startDate={startDate}
-          endDate={endDate}
-          handleStartDateChange={handleStartDateChange}
-          handleEndDateChange={handleEndDateChange}
-        />
-        <Pane paddingTop={16} />
+        <Pane paddingBottom={16} display="flex" flexDirection="row" justifyContent="space-between">
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            handleStartDateChange={handleStartDateChange}
+            handleEndDateChange={handleEndDateChange}
+          />
+          {/* TODO: Replace this with actual button. */}
+          <Pane
+            backgroundColor={theme.colors.primary}
+            marginLeft={16}
+            padding={12}
+            borderRadius={4}
+            cursor="pointer"
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            onClick={() => {
+              onCreateThought({
+                content: '',
+                tags: [],
+                created_at: new Date().toISOString()
+              });
+            }}
+          >
+            <PlusIcon size={16} marginRight={16} color="white" />
+            <Text fontSize="1rem" color="white" fontWeight={500}>
+              New Thought
+            </Text>
+          </Pane>
+        </Pane>
+
         <TagBar tags={filterTags} allTags={tags} onSave={setFilterTags} updateTags={setTags} padding={4} />
 
         <Pane flex="1" className="browseBodyNoScrollbar" paddingTop={16}>

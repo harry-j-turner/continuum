@@ -2,13 +2,13 @@ import { defaultTheme, mergeTheme } from 'evergreen-ui';
 
 const BACKGROUND = '#FFFFFF';
 const PRIMARY = '#394e5c';
-const SECONDARY = '#8ebdb5';
+const SECONDARY = '#829EB0';
 
 const GRAY = '#C5C5C5';
 const TINT3 = '#D9E8E7';
 const TINT4 = '#8CBAB7';
 
-const ACCENT = '#888888';
+const ACCENT = '#F6AE2D';
 const HIGHLIGHT = '#F2F2F2';
 const DANGER = '#F67E7D';
 

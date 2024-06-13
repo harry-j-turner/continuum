@@ -113,7 +113,7 @@ def test_max_ten_thoughts_are_listed(authenticated_client, user):
     """No more than ten thoughts are listed."""
 
     # Given - Eleven thoughts with view permissions assigned to the user
-    for i in range(11):
+    for _ in range(11):
         thought = ThoughtFactory()
         assign_perm("view_thought", user, thought)
 

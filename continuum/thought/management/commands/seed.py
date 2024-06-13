@@ -3,7 +3,7 @@ from thought.models import Tag, Thought
 from user.models import User
 from datetime import datetime
 from datetime import timedelta
-from random import randint, choice
+from random import SystemRandom
 from guardian.shortcuts import assign_perm
 
 TAGS = [
@@ -16,11 +16,12 @@ THOUGHTS = {}
 for i in range(1, 30):
     THOUGHTS[f"thought_{i}"] = {
         "content": f"Thought {i}",
-        "mood": randint(1, 5),
+        "mood": SystemRandom.randint(1, 5),
         "actions": "",
         "created_at": datetime.now() - timedelta(days=i),
-        "tags": [choice(TAGS) for _ in range(randint(1, 2))],
+        "tags": [SystemRandom.choice(TAGS) for _ in range(SystemRandom.randint(1, 2))],
     }
+
 
 class Command(BaseCommand):
     help = "Seed the database with initial data."
@@ -41,7 +42,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO("Creating Tags..."))
         tags = {}
         for t in TAGS:
-            tag, _ = Tag.objects.get_or_create(name=t["name"], description=t["description"], colour=t["colour"])        
+            tag, _ = Tag.objects.get_or_create(name=t["name"], description=t["description"], colour=t["colour"])
             assign_perm("view_tag", henry, tag)
             tags[tag.name] = tag
 

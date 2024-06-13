@@ -19,4 +19,3 @@ class ThoughtInline(admin.TabularInline):
 class ThoughtAdmin(GuardedModelAdmin):
     list_display = ["content", "created_at", "updated_at"]
     search_fields = ["content"]
-

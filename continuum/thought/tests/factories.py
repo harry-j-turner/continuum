@@ -12,7 +12,6 @@ class TagFactory(factory.django.DjangoModelFactory):
     colour = factory.Faker("hex_color")
 
 
-
 class ThoughtFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Thought

@@ -11,6 +11,7 @@ MOOD_CHOICES = [
     (5, "Very Happy"),
 ]
 
+
 class Tag(models.Model):
     """Tag Model."""
 
@@ -36,9 +37,8 @@ class Thought(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
 
     # Content fields.
-    content = models.TextField(blank=True)    
+    content = models.TextField(blank=True)
     mood = models.IntegerField(choices=MOOD_CHOICES, null=True)
 
     def __str__(self):
         return self.content
-

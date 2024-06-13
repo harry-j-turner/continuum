@@ -8,30 +8,35 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Tag',
+            name="Tag",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField()),
-                ('colour', models.CharField(max_length=24)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.TextField()),
+                ("colour", models.CharField(max_length=24)),
             ],
         ),
         migrations.CreateModel(
-            name='Thought',
+            name="Thought",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('content', models.TextField(blank=True)),
-                ('mood', models.IntegerField(choices=[(1, 'Very Unhappy'), (2, 'Unhappy'), (3, 'Neutral'), (4, 'Happy'), (5, 'Very Happy')], null=True)),
-                ('tags', models.ManyToManyField(blank=True, to='thought.tag')),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ("created_at", models.DateField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("content", models.TextField(blank=True)),
+                (
+                    "mood",
+                    models.IntegerField(
+                        choices=[(1, "Very Unhappy"), (2, "Unhappy"), (3, "Neutral"), (4, "Happy"), (5, "Very Happy")],
+                        null=True,
+                    ),
+                ),
+                ("tags", models.ManyToManyField(blank=True, to="thought.tag")),
             ],
         ),
     ]

@@ -1,10 +1,8 @@
 export type Thought = {
   id: string;
   content: string;
-  entry: string;
   tags: string[];
-  mood: number;
-  create_at: string;
+  created_at: string;
 };
 
 export type Tag = {

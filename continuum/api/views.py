@@ -48,7 +48,7 @@ class ThoughtViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
-       
+
         if self.action == "list":
             queryset = get_objects_for_user(self.request.user, "view_thought", klass=Thought)
 
@@ -88,7 +88,7 @@ class ThoughtViewSet(viewsets.ModelViewSet):
             queryset = get_objects_for_user(self.request.user, "delete_thought", klass=Thought)
         else:
             queryset = get_objects_for_user(self.request.user, "view_thought", klass=Thought)
-        
+
         queryset = queryset.order_by("-created_at")
         return queryset
 
@@ -101,5 +101,3 @@ class ThoughtViewSet(viewsets.ModelViewSet):
         thought = serializer.save()
         assign_perm("view_thought", self.request.user, thought)
         assign_perm("change_thought", self.request.user, thought)
-
-
