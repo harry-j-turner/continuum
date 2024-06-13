@@ -22,11 +22,15 @@ class CustomPageNumberPagination(PageNumberPagination):
     page_size = 10
 
 
+class CustomTagPageNumberPagination(PageNumberPagination):
+    page_size = 100
+
+
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = CustomPageNumberPagination
+    pagination_class = CustomTagPageNumberPagination
 
     def paginate_queryset(self, queryset):
         if self.action == "list":
