@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 
 import { EditableText } from '@blueprintjs/core';
 import { Tag, Thought } from '../../types';
-import { Button, Pane, TrashIcon } from 'evergreen-ui';
+import { Button, Pane, Text, TrashIcon } from 'evergreen-ui';
 import TagBar from '../TagBar';
 
 interface ThoughtEditorProps {
@@ -23,16 +23,29 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
   isDisabled
 }) => {
   const [content, setContent] = useState<string>(thought.content);
+  const [isTooLong, setIsTooLong] = useState<boolean>(false);
 
   useEffect(() => {
     setContent(thought.content);
   }, [thought]);
 
-  const handleChangeContent = useCallback(
+  const handleConfirmContent = useCallback(
     (content: string) => {
       onUpdate({ ...thought, content, tags: thought.tags });
     },
     [thought]
+  );
+
+  const handleChangeContent = useCallback(
+    (content: string) => {
+      if (content.length > 140) {
+        setIsTooLong(true);
+      } else {
+        setIsTooLong(false);
+        setContent(content);
+      }
+    },
+    [setContent]
   );
 
   const onChangeTags = useCallback(
@@ -63,10 +76,11 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
         disabled={isDisabled}
         multiline={true}
         value={content}
-        onConfirm={handleChangeContent}
-        onChange={(content: string) => setContent(content)}
+        onConfirm={handleConfirmContent}
+        onChange={handleChangeContent}
         className="thought-editor-editable-text"
       />
+      {isTooLong && <Text color="red600">Thoughts are limited to 140 characters.</Text>}
     </Pane>
   );
 };
