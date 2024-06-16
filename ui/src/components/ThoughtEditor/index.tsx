@@ -38,7 +38,7 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
 
   const handleChangeContent = useCallback(
     (content: string) => {
-      if (content.length > 140) {
+      if (content.length > 360) {
         setIsTooLong(true);
       } else {
         setIsTooLong(false);
@@ -80,7 +80,7 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
         onChange={handleChangeContent}
         className="thought-editor-editable-text"
       />
-      {isTooLong && <Text color="red600">Thoughts are limited to 140 characters.</Text>}
+      {isTooLong && <Text color="red600">Thoughts are limited to 360 characters.</Text>}
     </Pane>
   );
 };
