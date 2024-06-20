@@ -23,7 +23,7 @@ describe('ThoughtEditor', () => {
       <ThoughtEditor
         thought={thought}
         onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
+        onClickDelete={mockOnDelete}
         onUpdateTags={mockOnUpdateTags}
         allTags={allTags}
         isDisabled={false}
@@ -39,7 +39,7 @@ describe('ThoughtEditor', () => {
       <ThoughtEditor
         thought={thought}
         onUpdate={mockOnUpdate}
-        onDelete={mockOnDelete}
+        onClickDelete={mockOnDelete}
         onUpdateTags={mockOnUpdateTags}
         allTags={allTags}
         isDisabled={false}

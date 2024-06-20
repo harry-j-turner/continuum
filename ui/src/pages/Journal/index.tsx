@@ -215,7 +215,7 @@ function Journal() {
               key={thought.id}
               thought={thought}
               onUpdate={onUpdateThought}
-              onDelete={onDeleteThought}
+              onClickDelete={() => onDeleteThought(thought)}
               onUpdateTags={onUpdateTags}
               allTags={tags}
               isDisabled={false}

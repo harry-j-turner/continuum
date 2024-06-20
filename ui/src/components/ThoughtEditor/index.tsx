@@ -8,7 +8,7 @@ import TagBar from '../TagBar';
 interface ThoughtEditorProps {
   thought: Thought;
   onUpdate: (thought: Thought) => void;
-  onDelete: (thought: Thought) => void;
+  onClickDelete: () => void;
   onUpdateTags: (tags: Tag[]) => void;
   allTags: Tag[];
   isDisabled: boolean;
@@ -17,7 +17,7 @@ interface ThoughtEditorProps {
 const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
   thought,
   onUpdate,
-  onDelete,
+  onClickDelete,
   onUpdateTags,
   allTags,
   isDisabled
@@ -66,13 +66,13 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
     >
       <Pane display="flex" justifyContent="space-between" marginBottom={16}>
         <Pane display="flex" flexDirection="row" alignItems="center">
-          <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={onUpdateTags} allTags={allTags} />
-          <Heading size={600} marginLeft={16}>
+          <Heading size={600} marginRight={16}>
             {new Date(thought.created_at).toDateString()}
           </Heading>
+          <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={onUpdateTags} allTags={allTags} />
         </Pane>
         {window.innerWidth > 800 && (
-          <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon} disabled={isDisabled}>
+          <Button appearance="minimal" onClick={onClickDelete} iconBefore={TrashIcon} disabled={isDisabled}>
             Delete
           </Button>
         )}
