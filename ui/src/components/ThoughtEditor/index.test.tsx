@@ -34,4 +34,19 @@ describe('ThoughtEditor', () => {
     expect(contentSpan).toBeInTheDocument();
     expect(contentSpan).toHaveClass('bp5-editable-text-content');
   });
+  it('displays the date the thought was created', () => {
+    render(
+      <ThoughtEditor
+        thought={thought}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+        onUpdateTags={mockOnUpdateTags}
+        allTags={allTags}
+        isDisabled={false}
+      />
+    );
+
+    const dateSpan = screen.getByText('Fri Jan 01 2021');
+    expect(dateSpan).toBeInTheDocument();
+  });
 });

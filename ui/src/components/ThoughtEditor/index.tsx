@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 
 import { EditableText } from '@blueprintjs/core';
 import { Tag, Thought } from '../../types';
-import { Button, Pane, Text, TrashIcon } from 'evergreen-ui';
+import { Button, Heading, Pane, Text, TrashIcon } from 'evergreen-ui';
 import TagBar from '../TagBar';
 
 interface ThoughtEditorProps {
@@ -65,7 +65,12 @@ const ThoughtEditor: React.FC<ThoughtEditorProps> = ({
       borderRadius={4}
     >
       <Pane display="flex" justifyContent="space-between" marginBottom={16}>
-        <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={onUpdateTags} allTags={allTags} />
+        <Pane display="flex" flexDirection="row" alignItems="center">
+          <TagBar tags={thought.tags} onSave={onChangeTags} updateTags={onUpdateTags} allTags={allTags} />
+          <Heading size={600} marginLeft={16}>
+            {new Date(thought.created_at).toDateString()}
+          </Heading>
+        </Pane>
         {window.innerWidth > 800 && (
           <Button appearance="minimal" onClick={() => onDelete(thought)} iconBefore={TrashIcon} disabled={isDisabled}>
             Delete

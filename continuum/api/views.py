@@ -52,7 +52,6 @@ class ThoughtViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
-
         if self.action == "list":
             queryset = get_objects_for_user(self.request.user, "view_thought", klass=Thought)
 
